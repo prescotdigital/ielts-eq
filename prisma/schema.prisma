@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  testSessions  TestSession[]
+  questionUsage QuestionUsage[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum TestStatus {
+  STARTED
+  COMPLETED
+}
+
+model TestSession {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime   @default(now())
+  status      TestStatus @default(STARTED)
+  completedAt DateTime?
+  score       Float?
+  feedback    Json?
+  responses   Response[]
+}
+
+model Question {
+  id          String     @id @default(cuid())
+  text        String
+  part        Int        // 1, 2, or 3
+  category    String     @default("General") // e.g., "Work", "Hometown", "Person", "Technology"
+  subcategory String?    // Optional, e.g., "Mobile Phones" under "Technology"
+  difficulty  String     @default("medium") // "easy", "medium", "hard"
+  tags        String[]   // Array of tags for flexible filtering
+  createdAt   DateTime   @default(now())
+  responses   Response[]
+  usedBy      QuestionUsage[]
+}
+
+model Response {
+  id          String      @id @default(cuid())
+  sessionId   String
+  session     TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    Question    @relation(fields: [questionId], references: [id])
+  audioUrl    String
+  transcript  String?
+  feedback    String?     @db.Text // Store JSON feedback as text
+  score       Float?
+  createdAt   DateTime    @default(now())
+}
+
+model QuestionUsage {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  usedAt     DateTime @default(now())
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, questionId])
+  @@index([userId])
+  @@index([questionId])
+}

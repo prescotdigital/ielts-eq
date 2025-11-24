@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Mic, CheckCircle2, BarChart3, PlayCircle, GraduationCap, Globe, Briefcase } from "lucide-react";
 import Image from "next/image";

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Mic, CheckCircle2, BarChart3, PlayCircle } from "lucide-react";
+import { ArrowRight, Mic, CheckCircle2, BarChart3, PlayCircle, GraduationCap, Globe, Briefcase } from "lucide-react";
 
 export default function Home() {
   return (
@@ -69,6 +69,67 @@ export default function Home() {
             </Link>
           </div>
         </div>
+
+        {/* Who's This For Section */}
+        <div className="mt-32 mb-24 max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Who's This For?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Whether you're pursuing immigration, university admission, or career advancement,
+              IELTS EQ helps you achieve the speaking score you need.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Immigration */}
+            <div className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-3xl border border-blue-100 hover:border-blue-200 transition-all">
+              <div className="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center mb-6">
+                <Globe className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900">Immigration Applicants</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Secure your visa with confidence. Practice authentic IELTS speaking scenarios
+                and get the band score required for permanent residency in Canada, Australia, UK, or New Zealand.
+              </p>
+              <div className="text-sm text-blue-600 font-medium">
+                Achieve Band 7+ for most immigration programs
+              </div>
+            </div>
+
+            {/* University Students */}
+            <div className="bg-gradient-to-br from-purple-50 to-white p-8 rounded-3xl border border-purple-100 hover:border-purple-200 transition-all">
+              <div className="w-14 h-14 bg-purple-500 rounded-2xl flex items-center justify-center mb-6">
+                <GraduationCap className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900">University Students</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Get accepted to your dream university. Master the speaking test with AI-powered feedback
+                and meet entry requirements for top universities worldwide.
+              </p>
+              <div className="text-sm text-purple-600 font-medium">
+                Meet requirements for Oxford, Harvard, MIT & more
+              </div>
+            </div>
+
+            {/* Career Professionals */}
+            <div className="bg-gradient-to-br from-emerald-50 to-white p-8 rounded-3xl border border-emerald-100 hover:border-emerald-200 transition-all">
+              <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6">
+                <Briefcase className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900">Career Professionals</h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Validate your English proficiency for global opportunities. Demonstrate your communication
+                skills and unlock international career advancement.
+              </p>
+              <div className="text-sm text-emerald-600 font-medium">
+                Prove professional-level English proficiency
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         {/* Feature Grid */}
         <div id="features" className="grid md:grid-cols-3 gap-6 mt-24 max-w-6xl mx-auto">

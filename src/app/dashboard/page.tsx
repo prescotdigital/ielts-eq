@@ -2,8 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Play, History, TrendingUp, Award, LogOut } from "lucide-react";
+import { Play, History, TrendingUp, Award, LogOut, Book, Brain, ArrowRight, Mic, Volume2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import SupportTicket from "@/components/SupportTicket";
 
 export default async function Dashboard() {
     const session = await getServerSession(authOptions);
@@ -13,7 +14,7 @@ export default async function Dashboard() {
     }
 
     // Fetch user's test sessions
-    let testSessions = [];
+    let testSessions: any[] = [];
     try {
         testSessions = await prisma.testSession.findMany({
             where: {
@@ -103,6 +104,62 @@ export default async function Dashboard() {
                                 )}
                             </div>
                         </div>
+
+                        {/* Vocabulary Builder Card */}
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-emerald-200 transition-all">
+                            <div className="flex items-start justify-between relative z-10">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                                            <Book className="w-6 h-6" />
+                                        </div>
+                                        <h2 className="text-xl font-bold text-gray-900">Vocabulary Builder</h2>
+                                    </div>
+                                    <p className="text-gray-600 mb-6 max-w-md">
+                                        Master the Academic Word List (AWL) with interactive flashcards and quizzes.
+                                    </p>
+                                    <Link
+                                        href="/practice/vocabulary"
+                                        className="inline-flex items-center gap-2 text-emerald-600 font-semibold hover:text-emerald-700 hover:underline"
+                                    >
+                                        Start Practicing <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                </div>
+                                <div className="hidden sm:block">
+                                    <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center">
+                                        <Brain className="w-12 h-12 text-emerald-200" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Pronunciation Lab Card */}
+                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-blue-200 transition-all">
+                            <div className="flex items-start justify-between relative z-10">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                                            <Mic className="w-6 h-6" />
+                                        </div>
+                                        <h2 className="text-xl font-bold text-gray-900">Pronunciation Lab</h2>
+                                    </div>
+                                    <p className="text-gray-600 mb-6 max-w-md">
+                                        Improve your accent and clarity with AI-powered phoneme drills.
+                                    </p>
+                                    <Link
+                                        href="/practice/pronunciation"
+                                        className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 hover:underline"
+                                    >
+                                        Start Training <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                </div>
+                                <div className="hidden sm:block">
+                                    <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center">
+                                        <Volume2 className="w-12 h-12 text-blue-200" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Sidebar Stats */}
@@ -133,10 +190,12 @@ export default async function Dashboard() {
                                 Keep practicing to unlock detailed insights and reach Band 7.0+!
                             </p>
                         </div>
+
+                        <SupportTicket />
                     </div>
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 }
 

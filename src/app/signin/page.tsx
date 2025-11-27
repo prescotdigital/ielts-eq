@@ -4,8 +4,9 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import { Suspense } from "react";
 
-export default function SignIn() {
+function SignInContent() {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
     const error = searchParams?.get("error");
@@ -151,5 +152,13 @@ export default function SignIn() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SignIn() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+            <SignInContent />
+        </Suspense>
     );
 }

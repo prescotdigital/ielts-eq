@@ -6,14 +6,13 @@ const connectionString = process.env.DATABASE_URL
 
 const pool = new Pool({
     connectionString,
-    ssl: true
 })
 const adapter = new PrismaPg(pool)
 
 const globalForPrisma = globalThis as unknown as {
-    prisma: PrismaClient | undefined
+    prisma_new: PrismaClient | undefined
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
+export const prisma = globalForPrisma.prisma_new ?? new PrismaClient({ adapter })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma_new = prisma

@@ -25,13 +25,13 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              href="/api/auth/signin"
+              href="/api/auth/signin?callbackUrl=/dashboard"
               className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-4 py-2"
             >
               Login
             </Link>
             <Link
-              href="/api/auth/signin"
+              href="/api/auth/signin?callbackUrl=/dashboard"
               className="bg-gradient-to-r from-gray-900 to-gray-800 text-white px-5 py-2 rounded-full text-sm font-medium hover:shadow-lg hover:scale-105 transition-all shadow-md"
             >
               Get Started
@@ -66,7 +66,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/api/auth/signin?callbackUrl=/test"
+              href="/api/auth/signin?callbackUrl=/dashboard"
               className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-primary to-emerald-600 hover:from-emerald-600 hover:to-primary text-white rounded-full font-semibold text-lg transition-all shadow-lg shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300 flex items-center justify-center gap-2 hover:scale-105"
             >
               Start Free Practice

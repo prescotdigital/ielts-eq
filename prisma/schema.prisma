@@ -7,32 +7,34 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  testSessions  TestSession[]
-  questionUsage QuestionUsage[]
+  id                String                  @id @default(cuid())
+  name              String?
+  email             String                  @unique
+  emailVerified     DateTime?
+  image             String?
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  accounts          Account[]
+  sessions          Session[]
+  testSessions      TestSession[]
+  questionUsage     QuestionUsage[]
+  flashcardProgress UserFlashcardProgress[]
+  pronunciationProgress UserPronunciationProgress[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -73,29 +75,29 @@ model TestSession {
 }
 
 model Question {
-  id          String     @id @default(cuid())
+  id          String          @id @default(cuid())
   text        String
-  part        Int        // 1, 2, or 3
-  category    String     @default("General") // e.g., "Work", "Hometown", "Person", "Technology"
-  subcategory String?    // Optional, e.g., "Mobile Phones" under "Technology"
-  difficulty  String     @default("medium") // "easy", "medium", "hard"
-  tags        String[]   // Array of tags for flexible filtering
-  createdAt   DateTime   @default(now())
+  part        Int // 1, 2, or 3
+  category    String          @default("General") // e.g., "Work", "Hometown", "Person", "Technology"
+  subcategory String? // Optional, e.g., "Mobile Phones" under "Technology"
+  difficulty  String          @default("medium") // "easy", "medium", "hard"
+  tags        String[] // Array of tags for flexible filtering
+  createdAt   DateTime        @default(now())
   responses   Response[]
   usedBy      QuestionUsage[]
 }
 
 model Response {
-  id          String      @id @default(cuid())
-  sessionId   String
-  session     TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  questionId  String
-  question    Question    @relation(fields: [questionId], references: [id])
-  audioUrl    String
-  transcript  String?
-  feedback    String?     @db.Text // Store JSON feedback as text
-  score       Float?
-  createdAt   DateTime    @default(now())
+  id         String      @id @default(cuid())
+  sessionId  String
+  session    TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question    @relation(fields: [questionId], references: [id])
+  audioUrl   String
+  transcript String?
+  feedback   String?     @db.Text // Store JSON feedback as text
+  score      Float?
+  createdAt  DateTime    @default(now())
 }
 
 model QuestionUsage {
@@ -103,11 +105,71 @@ model QuestionUsage {
   userId     String
   questionId String
   usedAt     DateTime @default(now())
-  
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
   @@unique([userId, questionId])
   @@index([userId])
   @@index([questionId])
+}
+
+model Flashcard {
+  id           String   @id @default(cuid())
+  word         String   @unique
+  definition   String   @db.Text
+  example      String   @db.Text
+  partOfSpeech String
+  sublist      Int // AWL sublist 1-10 (1 = most frequent)
+  createdAt    DateTime @default(now())
+
+  userProgress UserFlashcardProgress[]
+
+  @@index([sublist])
+}
+
+model UserFlashcardProgress {
+  id           String   @id @default(cuid())
+  userId       String
+  flashcardId  String
+  familiarity  Int      @default(0) // 0=new, 1=learning, 2=familiar, 3=mastered
+  lastReviewed DateTime @default(now())
+  reviewCount  Int      @default(0)
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, flashcardId])
+  @@index([userId])
+  @@index([familiarity])
+  @@index([lastReviewed])
+}
+
+model PronunciationDrill {
+  id             String   @id @default(cuid())
+  phoneme        String   // e.g., "th-unvoiced", "r", "l"
+  label          String   // e.g., "The 'th' Sound"
+  description    String
+  mouthImageUrl  String?
+  
+  // Content
+  words          String[] // Array of practice words
+  sentences      String[] // Array of practice sentences/tongue twisters
+  
+  order          Int      @default(0)
+  
+  userProgress   UserPronunciationProgress[]
+}
+
+model UserPronunciationProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  drillId        String
+  score          Int      @default(0) // 0-100 based on success rate
+  completed      Boolean  @default(false)
+  
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drill          PronunciationDrill @relation(fields: [drillId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, drillId])
 }

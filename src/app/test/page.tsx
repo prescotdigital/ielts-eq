@@ -252,9 +252,9 @@ export default function TestPage() {
 
             setTranscript(data.transcript);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("Error processing response.");
+            alert(`Error processing response: ${error.message}`);
         } finally {
             setIsAnalyzing(false);
         }

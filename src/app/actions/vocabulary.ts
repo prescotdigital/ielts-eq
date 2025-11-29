@@ -64,6 +64,15 @@ export async function updateProgress(flashcardId: string, familiarity: number) {
         },
     });
 
+    // Log analytics event
+    await prisma.analyticsEvent.create({
+        data: {
+            userId: user.id,
+            type: 'VOCAB_PRACTICE',
+            metadata: { flashcardId, familiarity }
+        }
+    });
+
     return { success: true };
 }
 
@@ -92,4 +101,92 @@ export async function getUserStats() {
         mastered,
         learning,
     };
+}
+
+export async function getSublistProgress() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return {};
+
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+    });
+
+    if (!user) return {};
+
+    // Get all progress for this user
+    const progress = await prisma.userFlashcardProgress.findMany({
+        where: { userId: user.id },
+        include: { flashcard: true }
+    });
+
+    // Group by sublist
+    const sublistStats: Record<number, { total: number, reviewed: number, mastered: number }> = {};
+
+    // Initialize for 1-10
+    for (let i = 1; i <= 10; i++) {
+        sublistStats[i] = { total: 0, reviewed: 0, mastered: 0 };
+    }
+
+    // We need to know total words per sublist to be accurate, but for now we'll just count what we've seen
+    // Ideally we'd query the Flashcard table for totals, but let's just track "active" progress for now.
+
+    progress.forEach(p => {
+        const sub = p.flashcard.sublist;
+        if (!sublistStats[sub]) sublistStats[sub] = { total: 0, reviewed: 0, mastered: 0 };
+
+        sublistStats[sub].reviewed++;
+        if (p.familiarity === 3) sublistStats[sub].mastered++;
+    });
+
+    return sublistStats;
+}
+
+export async function updateGameProgress(wordIds: string[]) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // Update all words to at least "reviewed" (familiarity 1) or increment review count
+    await Promise.all(wordIds.map(async (id) => {
+        const existing = await prisma.userFlashcardProgress.findUnique({
+            where: { userId_flashcardId: { userId: user.id, flashcardId: id } }
+        });
+
+        if (existing) {
+            await prisma.userFlashcardProgress.update({
+                where: { id: existing.id },
+                data: {
+                    reviewCount: { increment: 1 },
+                    lastReviewed: new Date(),
+                    familiarity: existing.familiarity === 0 ? 1 : existing.familiarity
+                }
+            });
+        } else {
+            await prisma.userFlashcardProgress.create({
+                data: {
+                    userId: user.id,
+                    flashcardId: id,
+                    familiarity: 1,
+                    reviewCount: 1,
+                    lastReviewed: new Date()
+                }
+            });
+        }
+    }));
+
+    // Log analytics
+    await prisma.analyticsEvent.create({
+        data: {
+            userId: user.id,
+            type: 'VOCAB_PRACTICE',
+            metadata: { wordCount: wordIds.length }
+        }
+    });
+
+    return { success: true };
 }

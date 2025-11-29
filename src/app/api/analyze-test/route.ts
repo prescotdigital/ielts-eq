@@ -97,19 +97,35 @@ export async function POST(request: Request) {
         3. Grammatical Range and Accuracy
         4. Pronunciation (Note: You can only estimate this based on the transcript text features like pauses or repetition if noted, but primarily focus on the other 3 for text-based analysis. Acknowledge this limitation.)
 
+        BAND SCORE GUIDELINES:
+        - Band 9: Expert user with full operational command
+        - Band 8: Very good user with fully operational command (occasional inaccuracies)
+        - Band 7: Good user with operational command (occasional inaccuracies in unfamiliar situations)
+        - Band 6: Competent user with generally effective command (some inaccuracies and misunderstandings)
+        - Band 5: Modest user with partial command (frequent problems but basic communication)
+        - Band 4: Limited user with basic competence in familiar situations
+        - Band 3: Extremely limited user conveying only general meaning
+        - Band 2: Intermittent user with great difficulty
+        - Band 1: Non-user with no ability except isolated words
+        - Band 0: Did not attempt the test
+
+        Calculate the overall band score as the AVERAGE of the 4 sub-scores, rounded to the nearest 0.5.
+        For example: If sub-scores are Fluency: 7.0, Lexical: 6.5, Grammar: 6.0, Pronunciation: 6.5, 
+        the overall band = (7.0 + 6.5 + 6.0 + 6.5) / 4 = 6.5
+
         Return the response in strictly valid JSON format with the following structure:
         {
-            "overall_band": 6.5,
+            "overall_band": <calculated average rounded to nearest 0.5>,
             "sub_scores": {
-                "fluency": 6.0,
-                "lexical": 7.0,
-                "grammar": 6.0,
-                "pronunciation": 6.0
+                "fluency": <score 0-9 in 0.5 increments>,
+                "lexical": <score 0-9 in 0.5 increments>,
+                "grammar": <score 0-9 in 0.5 increments>,
+                "pronunciation": <score 0-9 in 0.5 increments>
             },
             "feedback": {
-                "strengths": ["..."],
-                "weaknesses": ["..."],
-                "general_comments": "..."
+                "strengths": ["specific strength 1", "specific strength 2", "..."],
+                "weaknesses": ["specific weakness 1", "specific weakness 2", "..."],
+                "general_comments": "Overall assessment and recommendations for improvement"
             }
         }`;
 
@@ -124,13 +140,26 @@ export async function POST(request: Request) {
 
         const analysisResult = JSON.parse(completion.choices[0].message.content || "{}");
 
-        // 5. Update the TestSession
+        // 5. Update the TestSession with score and analysis
         await prisma.testSession.update({
             where: { id: sessionId },
             data: {
                 status: 'COMPLETED',
                 completedAt: new Date(),
                 score: analysisResult.overall_band,
+                analysis: JSON.stringify(analysisResult) // Save the full analysis with sub_scores
+            }
+        });
+
+        // Log analytics event
+        await prisma.analyticsEvent.create({
+            data: {
+                userId: session.userId,
+                type: 'TEST_COMPLETE',
+                metadata: {
+                    sessionId: session.id,
+                    score: analysisResult.overall_band
+                }
             }
         });
 

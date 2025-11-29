@@ -13,8 +13,15 @@ export default async function Dashboard() {
         redirect("/api/auth/signin");
     }
 
-    // Fetch user's test sessions
+    // Fetch user's test sessions with responses to get sub-scores
     let testSessions: any[] = [];
+    let averageScores = {
+        fluency: 0,
+        lexical: 0,
+        grammar: 0,
+        pronunciation: 0
+    };
+
     try {
         testSessions = await prisma.testSession.findMany({
             where: {
@@ -23,15 +30,74 @@ export default async function Dashboard() {
                 },
                 status: 'COMPLETED'
             },
+            include: {
+                responses: {
+                    select: {
+                        id: true // Just need to know responses exist
+                    }
+                }
+            },
             orderBy: {
                 date: 'desc'
             },
             take: 5
         });
+
+        // Calculate average sub-scores from all completed tests
+        if (testSessions.length > 0) {
+            let totalFluency = 0, totalLexical = 0, totalGrammar = 0, totalPronunciation = 0;
+            let count = 0;
+
+            testSessions.forEach(session => {
+                // Extract sub-scores from the analysis field
+                if (session.analysis) {
+                    try {
+                        const analysis = JSON.parse(session.analysis);
+                        if (analysis.sub_scores) {
+                            totalFluency += analysis.sub_scores.fluency || 0;
+                            totalLexical += analysis.sub_scores.lexical || 0;
+                            totalGrammar += analysis.sub_scores.grammar || 0;
+                            totalPronunciation += analysis.sub_scores.pronunciation || 0;
+                            count++;
+                        }
+                    } catch (e) {
+                        // Skip invalid JSON
+                    }
+                }
+            });
+
+            if (count > 0) {
+                averageScores = {
+                    fluency: Math.round((totalFluency / count) * 100 / 9), // Convert to percentage
+                    lexical: Math.round((totalLexical / count) * 100 / 9),
+                    grammar: Math.round((totalGrammar / count) * 100 / 9),
+                    pronunciation: Math.round((totalPronunciation / count) * 100 / 9)
+                };
+            }
+        }
     } catch (error) {
         console.error('Failed to fetch test sessions:', error);
         // Continue with empty array
     }
+
+    // Helper function to get color based on band score
+    const getBandScoreColor = (score: number | null) => {
+        if (!score) return 'text-gray-400';
+        if (score >= 8) return 'text-green-600';
+        if (score >= 7) return 'text-emerald-600';
+        if (score >= 6) return 'text-blue-600';
+        if (score >= 5) return 'text-yellow-600';
+        return 'text-orange-600';
+    };
+
+    const getBandScoreBg = (score: number | null) => {
+        if (!score) return 'bg-gray-100';
+        if (score >= 8) return 'bg-green-50';
+        if (score >= 7) return 'bg-emerald-50';
+        if (score >= 6) return 'bg-blue-50';
+        if (score >= 5) return 'bg-yellow-50';
+        return 'bg-orange-50';
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
@@ -83,14 +149,14 @@ export default async function Dashboard() {
                                             <Link
                                                 key={test.id}
                                                 href={`/results/${test.id}`}
-                                                className="p-6 hover:bg-gray-50 transition-colors flex justify-between items-center"
+                                                className={`p-6 hover:bg-gray-50 transition-colors flex justify-between items-center ${getBandScoreBg(test.score)}`}
                                             >
                                                 <div>
                                                     <p className="font-bold text-gray-900">IELTS Speaking Mock Test</p>
                                                     <p className="text-sm text-gray-500">{new Date(test.date).toLocaleDateString()}</p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="text-2xl font-bold text-primary">{test.score || 'N/A'}</p>
+                                                    <p className={`text-2xl font-bold ${getBandScoreColor(test.score)}`}>{test.score || 'N/A'}</p>
                                                     <p className="text-xs text-gray-400 uppercase font-bold">Band Score</p>
                                                 </div>
                                             </Link>
@@ -169,10 +235,10 @@ export default async function Dashboard() {
                                 <TrendingUp className="w-5 h-5 text-purple-500" /> Your Progress
                             </h3>
                             <div className="space-y-4">
-                                <ProgressItem label="Fluency" value={0} color="bg-emerald-500" />
-                                <ProgressItem label="Lexical Resource" value={0} color="bg-blue-500" />
-                                <ProgressItem label="Grammar" value={0} color="bg-purple-500" />
-                                <ProgressItem label="Pronunciation" value={0} color="bg-orange-500" />
+                                <ProgressItem label="Fluency" value={averageScores.fluency} color="bg-emerald-500" />
+                                <ProgressItem label="Lexical Resource" value={averageScores.lexical} color="bg-blue-500" />
+                                <ProgressItem label="Grammar" value={averageScores.grammar} color="bg-purple-500" />
+                                <ProgressItem label="Pronunciation" value={averageScores.pronunciation} color="bg-orange-500" />
                             </div>
                         </div>
 

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "UserPronunciationProgress" ADD COLUMN     "attempts" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "lastAttempt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

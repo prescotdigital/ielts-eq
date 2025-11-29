@@ -48,14 +48,26 @@ export async function updateDrillProgress(drillId: string, score: number) {
             }
         },
         update: {
-            score: score, // Replace with new score
-            completed: true
+            completed: true,
+            score: Math.max(score, 0), // Keep highest score logic if needed, but for now just update
+            attempts: { increment: 1 },
+            lastAttempt: new Date()
         },
         create: {
             userId: user.id,
             drillId,
+            completed: true,
             score,
-            completed: true
+            attempts: 1
+        }
+    });
+
+    // Log analytics event
+    await prisma.analyticsEvent.create({
+        data: {
+            userId: user.id,
+            type: 'PRONUNCIATION_PRACTICE',
+            metadata: { drillId, score }
         }
     });
 

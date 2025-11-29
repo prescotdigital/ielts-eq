@@ -14,6 +14,7 @@ const requiredEnvVars = [
     'GOOGLE_CLIENT_SECRET',
     'NEXTAUTH_SECRET',
     'NEXTAUTH_URL',
+    'RESEND_API_KEY',
 ];
 
 export function validateEnvironment() {

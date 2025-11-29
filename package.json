@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "migrate:prod": "node scripts/migrate-prod.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
@@ -24,6 +27,7 @@
     "prisma": "^7.0.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "recharts": "^3.5.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

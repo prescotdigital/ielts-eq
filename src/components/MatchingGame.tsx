@@ -13,7 +13,7 @@ interface Word {
 
 interface MatchingGameProps {
     words: Word[];
-    onComplete: (score: number, total: number) => void;
+    onComplete: (score: number, total: number, wordIds: string[]) => void;
 }
 
 interface GameCard {
@@ -75,7 +75,8 @@ export default function MatchingGame({ words, onComplete }: MatchingGameProps) {
                     setGameCompleted(true);
                     // Calculate score: Max possible is words.length. Deduct for mistakes. Min 0.
                     const finalScore = Math.max(0, words.length - mistakes);
-                    setTimeout(() => onComplete(finalScore, words.length), 1500); // Delay to show completion state
+                    const wordIds = words.map(w => w.id);
+                    setTimeout(() => onComplete(finalScore, words.length, wordIds), 1500); // Delay to show completion state
                 }
             } else {
                 // No match
@@ -92,18 +93,27 @@ export default function MatchingGame({ words, onComplete }: MatchingGameProps) {
     };
 
     if (gameCompleted) {
+        const correctPairs = words.length;
+        const percentage = Math.round(((correctPairs - mistakes) / correctPairs) * 100);
         return (
             <div className="text-center p-8 bg-white rounded-3xl shadow-xl border border-emerald-100 max-w-xl mx-auto animate-in zoom-in-50">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Trophy className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Matched All!</h2>
-                <p className="text-gray-600 mb-8">
-                    You completed the set with {mistakes === 0 ? "perfect accuracy!" : `${mistakes} mistakes.`}
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">All Pairs Matched!</h2>
+                <p className="text-gray-600 mb-2">
+                    You completed <strong>{correctPairs} pairs</strong> with {mistakes === 0 ? "no mistakes!" : `${mistakes} mistake${mistakes > 1 ? 's' : ''}`}
                 </p>
-                <Button onClick={() => window.location.reload()} className="w-full py-6 text-lg">
-                    <RefreshCw className="w-5 h-5 mr-2" /> Play Again
-                </Button>
+                <p className="text-lg font-semibold text-emerald-600 mb-8">{percentage}% Accuracy</p>
+
+                <div className="flex gap-3">
+                    <Button onClick={() => window.location.href = '/practice/vocabulary'} variant="outline" className="flex-1 py-6 text-lg">
+                        Exit
+                    </Button>
+                    <Button onClick={() => window.location.reload()} className="flex-1 py-6 text-lg">
+                        <RefreshCw className="w-5 h-5 mr-2" /> Try Again
+                    </Button>
+                </div>
             </div>
         );
     }

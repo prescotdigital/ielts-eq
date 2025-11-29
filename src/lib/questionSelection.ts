@@ -120,10 +120,10 @@ function shuffleAndTake<T>(array: T[], count: number): T[] {
 }
 
 /**
- * Select a complete set of questions for a full test
- * Part 1: 4 questions from different categories
+ * Select a complete set of questions for an authentic IELTS test
+ * Part 1: 8-12 questions from 1-3 themes
  * Part 2: 1 cue card
- * Part 3: 4 follow-up questions related to Part 2 category
+ * Part 3: 4-6 follow-up questions thematically linked to Part 2
  */
 export async function selectQuestionsForTest(userEmail: string) {
     // Look up user ID from email
@@ -138,15 +138,7 @@ export async function selectQuestionsForTest(userEmail: string) {
 
     const userId = user.id;
 
-    // Part 1: 4 questions from different categories
-    const part1Questions = await selectUnseenQuestions({
-        userId,
-        part: 1,
-        count: 4,
-        ensureDifferentCategories: true
-    });
-
-    // Part 2: 1 cue card from random category
+    // STEP 1: Select Part 2 question (with theme group)
     const part2Questions = await selectUnseenQuestions({
         userId,
         part: 2,
@@ -154,30 +146,125 @@ export async function selectQuestionsForTest(userEmail: string) {
     });
 
     const part2Question = part2Questions[0];
+    const themeGroup = part2Question?.themeGroup;
 
-    // Part 3: 4 follow-up questions
-    // Try to get questions from same category as Part 2, otherwise random
-    let part3Questions = await selectUnseenQuestions({
-        userId,
-        part: 3,
-        count: 4,
-        category: part2Question?.category
-    });
+    // STEP 2: Select Part 3 questions (4-6) from same theme group
+    const part3Count = randomInt(4, 6);
+    let part3Questions: any[] = [];
 
-    // If not enough questions in same category, get random Part 3 questions
-    if (part3Questions.length < 4) {
+    if (themeGroup) {
+        // Try to get questions from same theme group
+        const seenQuestionIds = await getSeenQuestionIds(userId, 3);
+
+        part3Questions = await prisma.question.findMany({
+            where: {
+                part: 3,
+                themeGroup: themeGroup,
+                id: { notIn: seenQuestionIds }
+            }
+        });
+
+        // If not enough unseen questions in theme group, allow repetition
+        if (part3Questions.length < part3Count) {
+            part3Questions = await prisma.question.findMany({
+                where: {
+                    part: 3,
+                    themeGroup: themeGroup
+                }
+            });
+        }
+    }
+
+    // Fallback: if still not enough, get random Part 3 questions
+    if (part3Questions.length < part3Count) {
         part3Questions = await selectUnseenQuestions({
             userId,
             part: 3,
-            count: 4
+            count: part3Count
         });
     }
+
+    // Shuffle and take the required count
+    part3Questions = shuffleAndTake(part3Questions, part3Count);
+
+    // STEP 3: Select Part 1 questions (8-12) from 1-3 themes
+    const part1Count = randomInt(8, 12);
+    const themeCount = randomInt(1, 3);
+
+    // Get all Part 1 categories to use as themes
+    const allPart1Questions = await prisma.question.findMany({
+        where: { part: 1 },
+        select: { category: true }
+    });
+
+    const uniqueCategories = [...new Set(allPart1Questions.map(q => q.category))];
+
+    // Randomly select 1-3 themes
+    const selectedThemes = shuffleAndTake(uniqueCategories, themeCount);
+
+    // Distribute questions across themes
+    const part1Questions = await distributeQuestionsAcrossThemes(
+        userId,
+        selectedThemes,
+        part1Count
+    );
 
     return {
         part1: part1Questions,
         part2: part2Question,
         part3: part3Questions
     };
+}
+
+/**
+ * Distribute Part 1 questions across multiple themes
+ * More questions from first theme, fewer from subsequent themes
+ */
+async function distributeQuestionsAcrossThemes(
+    userId: string,
+    themes: string[],
+    totalCount: number
+): Promise<any[]> {
+    const distribution: number[] = [];
+
+    if (themes.length === 1) {
+        distribution.push(totalCount);
+    } else if (themes.length === 2) {
+        // e.g., 8 questions: 5 from theme 1, 3 from theme 2
+        const firstThemeCount = Math.ceil(totalCount * 0.6);
+        distribution.push(firstThemeCount, totalCount - firstThemeCount);
+    } else {
+        // 3 themes: e.g., 10 questions: 5, 3, 2
+        const firstThemeCount = Math.ceil(totalCount * 0.5);
+        const secondThemeCount = Math.ceil((totalCount - firstThemeCount) * 0.6);
+        const thirdThemeCount = totalCount - firstThemeCount - secondThemeCount;
+        distribution.push(firstThemeCount, secondThemeCount, thirdThemeCount);
+    }
+
+    const allQuestions: any[] = [];
+
+    for (let i = 0; i < themes.length; i++) {
+        const theme = themes[i];
+        const count = distribution[i];
+
+        const themeQuestions = await selectUnseenQuestions({
+            userId,
+            part: 1,
+            count,
+            category: theme
+        });
+
+        allQuestions.push(...themeQuestions);
+    }
+
+    return allQuestions;
+}
+
+/**
+ * Generate random integer between min and max (inclusive)
+ */
+function randomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**

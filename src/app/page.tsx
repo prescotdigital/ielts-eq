@@ -280,6 +280,31 @@ export default function Home() {
           animation: fade-in-up-delayed 1s ease-out 0.3s both;
         }
       `}</style>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200/50 bg-white/80 backdrop-blur-xl mt-20">
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                EQ
+              </div>
+              <span className="text-sm text-gray-600">© 2025 IELTS EQ. All rights reserved.</span>
+            </div>
+            <div className="flex gap-6 text-sm">
+              <Link href="/legal/terms" className="text-gray-600 hover:text-emerald-600 transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/legal/privacy" className="text-gray-600 hover:text-emerald-600 transition-colors">
+                Privacy Policy
+              </Link>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 text-center mt-4">
+            Not affiliated with or endorsed by official IELTS testing bodies.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

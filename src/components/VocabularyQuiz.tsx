@@ -15,7 +15,7 @@ interface Word {
 
 interface VocabularyQuizProps {
     words: Word[];
-    onComplete: (score: number, total: number) => void;
+    onComplete: (score: number, total: number, wordIds: string[]) => void;
 }
 
 export default function VocabularyQuiz({ words, onComplete }: VocabularyQuizProps) {
@@ -70,29 +70,37 @@ export default function VocabularyQuiz({ words, onComplete }: VocabularyQuizProp
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
             setQuizCompleted(true);
-            onComplete(score + (isCorrect ? 1 : 0), words.length); // Add last point if correct
+            const wordIds = words.map(w => w.id);
+            onComplete(score + (isCorrect ? 1 : 0), words.length, wordIds); // Add last point if correct
         }
     };
 
     if (quizCompleted) {
+        const percentage = Math.round((score / words.length) * 100);
         return (
             <div className="text-center p-8 bg-white rounded-3xl shadow-xl border border-emerald-100 max-w-xl mx-auto">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Trophy className="w-10 h-10 text-emerald-600" />
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Quiz Complete!</h2>
-                <p className="text-gray-600 mb-8">You scored {score} out of {words.length}</p>
+                <p className="text-gray-600 mb-2">You scored <strong>{score} out of {words.length}</strong></p>
+                <p className="text-lg font-semibold text-emerald-600 mb-8">{percentage}% Correct</p>
 
                 <div className="w-full bg-gray-100 rounded-full h-4 mb-8 overflow-hidden">
                     <div
                         className="bg-emerald-500 h-full rounded-full transition-all duration-1000"
-                        style={{ width: `${(score / words.length) * 100}%` }}
+                        style={{ width: `${percentage}%` }}
                     />
                 </div>
 
-                <Button onClick={() => window.location.reload()} className="w-full py-6 text-lg">
-                    <RefreshCw className="w-5 h-5 mr-2" /> Play Again
-                </Button>
+                <div className="flex gap-3">
+                    <Button onClick={() => window.location.href = '/practice/vocabulary'} variant="outline" className="flex-1 py-6 text-lg">
+                        Exit
+                    </Button>
+                    <Button onClick={() => window.location.reload()} className="flex-1 py-6 text-lg">
+                        <RefreshCw className="w-5 h-5 mr-2" /> Try Again
+                    </Button>
+                </div>
             </div>
         );
     }

@@ -6,12 +6,33 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+enum EventType {
+  LOGIN
+  TEST_START
+  TEST_COMPLETE
+  VOCAB_PRACTICE
+  PRONUNCIATION_PRACTICE
+}
+
 model User {
   id                String                  @id @default(cuid())
   name              String?
   email             String                  @unique
   emailVerified     DateTime?
   image             String?
+  role              UserRole                @default(USER)
+  lastActiveAt      DateTime?
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
   accounts          Account[]
@@ -20,6 +41,37 @@ model User {
   questionUsage     QuestionUsage[]
   flashcardProgress UserFlashcardProgress[]
   pronunciationProgress UserPronunciationProgress[]
+  subscriptions     Subscription[]
+  analyticsEvents   AnalyticsEvent[]
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  status    SubscriptionStatus @default(ACTIVE)
+  planId    String             // e.g., "monthly_pro"
+  amount    Float              // For PNL calculation
+  currency  String             @default("USD")
+  startDate DateTime           @default(now())
+  endDate   DateTime?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AnalyticsEvent {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  type      EventType
+  metadata  Json?     // Extra details (e.g., drill ID, score)
+  createdAt DateTime  @default(now())
+
+  @@index([type, createdAt])
 }
 
 model Account {
@@ -67,11 +119,13 @@ model TestSession {
   userId      String
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   date        DateTime   @default(now())
-  status      TestStatus @default(STARTED)
-  completedAt DateTime?
+  status      String     @default("IN_PROGRESS") // "IN_PROGRESS", "COMPLETED"
   score       Float?
-  feedback    Json?
+  analysis    String?    @db.Text // Store holistic analysis JSON with sub_scores
+  completedAt DateTime?
   responses   Response[]
+
+  @@index([userId])
 }
 
 model Question {
@@ -80,6 +134,7 @@ model Question {
   part        Int // 1, 2, or 3
   category    String          @default("General") // e.g., "Work", "Hometown", "Person", "Technology"
   subcategory String? // Optional, e.g., "Mobile Phones" under "Technology"
+  themeGroup  String? // Links Part 2 and Part 3 questions (e.g., "events", "technology", "people")
   difficulty  String          @default("medium") // "easy", "medium", "hard"
   tags        String[] // Array of tags for flexible filtering
   createdAt   DateTime        @default(now())
@@ -167,6 +222,8 @@ model UserPronunciationProgress {
   drillId        String
   score          Int      @default(0) // 0-100 based on success rate
   completed      Boolean  @default(false)
+  attempts       Int      @default(0)
+  lastAttempt    DateTime @default(now())
   
   user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   drill          PronunciationDrill @relation(fields: [drillId], references: [id], onDelete: Cascade)

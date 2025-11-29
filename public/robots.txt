@@ -1,0 +1,19 @@
+# Sitemap
+User-agent: *
+Allow: /
+
+# Public pages
+Allow: /
+Allow: /signin
+Allow: /legal/terms
+Allow: /legal/privacy
+
+# Block admin and authenticated areas from crawling
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api
+Disallow: /test
+Disallow: /practice
+
+# Sitemap location
+Sitemap: https://your-domain.vercel.app/sitemap.xml

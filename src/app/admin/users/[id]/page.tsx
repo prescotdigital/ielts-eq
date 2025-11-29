@@ -29,7 +29,7 @@ export default async function UserDetailPage({
         ? (user.testSessions.reduce((acc, s) => acc + (s.score || 0), 0) / totalTests).toFixed(1)
         : "N/A";
 
-    const vocabMastered = user.flashcardProgress.filter(p => p.status === 'MASTERED').length;
+    const masteredWords = user.flashcardProgress.filter(p => p.familiarity >= 3).length;
     const drillsCompleted = user.pronunciationProgress.length;
 
     return (
@@ -89,7 +89,7 @@ export default async function UserDetailPage({
                         <BookOpen className="w-5 h-5 text-blue-500" />
                         <h3 className="font-medium text-gray-900">Vocabulary</h3>
                     </div>
-                    <p className="text-3xl font-bold text-gray-900">{vocabMastered}</p>
+                    <p className="text-3xl font-bold text-gray-900">{masteredWords}</p>
                     <p className="text-sm text-gray-500">Words Mastered</p>
                 </div>
 
@@ -125,7 +125,7 @@ export default async function UserDetailPage({
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className={`font-bold ${(session.score || 0) >= 7 ? 'text-emerald-600' :
-                                            (session.score || 0) >= 6 ? 'text-blue-600' : 'text-orange-600'
+                                        (session.score || 0) >= 6 ? 'text-blue-600' : 'text-orange-600'
                                         }`}>
                                         {session.score || 'N/A'}
                                     </span>

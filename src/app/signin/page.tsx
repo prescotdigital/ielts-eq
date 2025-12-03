@@ -88,6 +88,64 @@ function SignInContent() {
                             </div>
                         )}
 
+                        {/* Credentials Form */}
+                        <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.currentTarget);
+                            const email = formData.get("email") as string;
+                            const password = formData.get("password") as string;
+
+                            const result = await signIn("credentials", {
+                                email,
+                                password,
+                                redirect: false,
+                                callbackUrl
+                            });
+
+                            if (result?.error) {
+                                // Handle error (you might want to add state for this)
+                                window.location.href = `/signin?error=CredentialsSignin`;
+                            } else {
+                                window.location.href = callbackUrl;
+                            }
+                        }} className="space-y-4 mb-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input
+                                    name="email"
+                                    type="email"
+                                    required
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                    placeholder="you@example.com"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <input
+                                    name="password"
+                                    type="password"
+                                    required
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full bg-primary hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                            >
+                                Sign In
+                            </button>
+                        </form>
+
+                        <div className="relative mb-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-200"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                            </div>
+                        </div>
+
                         {/* Google Sign In Button */}
                         <button
                             onClick={() => signIn("google", { callbackUrl })}
@@ -114,6 +172,15 @@ function SignInContent() {
                             <span>Continue with Google</span>
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
+
+                        <div className="mt-6 text-center">
+                            <p className="text-gray-600">
+                                Don't have an account?{" "}
+                                <a href="/register" className="text-primary font-semibold hover:underline">
+                                    Create one
+                                </a>
+                            </p>
+                        </div>
 
                         <div className="mt-8 text-center">
                             <p className="text-sm text-gray-500">

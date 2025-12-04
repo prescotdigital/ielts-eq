@@ -37,6 +37,7 @@ export default function TestPage() {
         2: [],
         3: []
     });
+    const [questionsLoaded, setQuestionsLoaded] = useState(false);
 
     // Fetch questions on mount
     useEffect(() => {
@@ -55,7 +56,10 @@ export default function TestPage() {
                 return res.json();
             })
             .then(data => {
-                if (data) setQuestions(data);
+                if (data) {
+                    setQuestions(data);
+                    setQuestionsLoaded(true);
+                }
             })
             .catch(err => console.error('Failed to load questions:', err));
     }, []);
@@ -289,20 +293,28 @@ export default function TestPage() {
                         {!micPermission ? (
                             <div className="space-y-3">
                                 <button onClick={checkMic} className="w-full py-3 bg-gray-900 text-white rounded-full font-bold hover:bg-gray-800 transition-colors">Test Microphone</button>
-                                <button onClick={startTest} disabled={isSubmitting} className="w-full py-3 text-gray-500 font-medium hover:text-gray-900 transition-colors">
-                                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Skip Microphone Check"}
+                                <button
+                                    onClick={startTest}
+                                    disabled={isSubmitting || !questionsLoaded}
+                                    className="w-full py-3 text-gray-500 font-medium hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : !questionsLoaded ? "Loading questions..." : "Skip Microphone Check"}
                                 </button>
                             </div>
                         ) : (
                             <div className="space-y-3">
                                 <button
                                     onClick={startTest}
-                                    disabled={isSubmitting}
-                                    className="w-full py-3 bg-primary text-white rounded-full font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-200 flex items-center justify-center gap-2"
+                                    disabled={isSubmitting || !questionsLoaded}
+                                    className="w-full py-3 bg-primary text-white rounded-full font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary"
                                 >
                                     {isSubmitting ? (
                                         <>
                                             <Loader2 className="w-5 h-5 animate-spin" /> Starting...
+                                        </>
+                                    ) : !questionsLoaded ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 animate-spin" /> Loading questions...
                                         </>
                                     ) : (
                                         "Start Test"

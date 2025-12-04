@@ -4,12 +4,34 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { ArrowRight, CheckCircle } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 function SignInContent() {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
     const error = searchParams?.get("error");
+    const [errorLogged, setErrorLogged] = useState(false);
+
+    // Log OAuth failures when user lands with error
+    useEffect(() => {
+        if (error && !errorLogged) {
+            setErrorLogged(true);
+
+            // Try to extract email from URL or session storage
+            const attemptedEmail = searchParams?.get("email") || sessionStorage.getItem("lastAttemptedEmail") || "unknown";
+
+            fetch('/api/log-login-attempt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: attemptedEmail,
+                    provider: 'google', // OAuth errors are typically from Google
+                    error: error,
+                    userAgent: navigator.userAgent,
+                }),
+            }).catch(err => console.error('Failed to log OAuth error:', err));
+        }
+    }, [error, errorLogged, searchParams]);
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -103,7 +125,22 @@ function SignInContent() {
                             });
 
                             if (result?.error) {
-                                // Handle error (you might want to add state for this)
+                                // Log failed attempt
+                                try {
+                                    await fetch('/api/log-login-attempt', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            email,
+                                            provider: 'credentials',
+                                            error: result.error,
+                                            userAgent: navigator.userAgent,
+                                        }),
+                                    });
+                                } catch (err) {
+                                    console.error('Failed to log login attempt:', err);
+                                }
+
                                 window.location.href = `/signin?error=CredentialsSignin`;
                             } else {
                                 window.location.href = callbackUrl;

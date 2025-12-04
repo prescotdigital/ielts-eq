@@ -77,8 +77,31 @@ export default async function Dashboard() {
         }
     } catch (error) {
         console.error('Failed to fetch test sessions:', error);
-        // Continue with empty array
     }
+
+    // Fetch vocabulary progress stats
+    let vocabStats = { totalReviewed: 0, mastered: 0 };
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: session.user?.email || '' },
+            select: { id: true }
+        });
+
+        if (user) {
+            const progress = await prisma.userFlashcardProgress.findMany({
+                where: { userId: user.id }
+            });
+
+            vocabStats = {
+                totalReviewed: progress.length,
+                mastered: progress.filter(p => p.familiarity === 3).length
+            };
+        }
+    } catch (error) {
+        console.error('Failed to fetch vocabulary stats:', error);
+    }
+    // Continue with empty array
+
 
     // Helper function to get color based on band score
     const getBandScoreColor = (score: number | null) => {
@@ -181,9 +204,21 @@ export default async function Dashboard() {
                                         </div>
                                         <h2 className="text-xl font-bold text-gray-900">Vocabulary Builder</h2>
                                     </div>
-                                    <p className="text-gray-600 mb-6 max-w-md">
+                                    <p className="text-gray-600 mb-4 max-w-md">
                                         Master the Academic Word List (AWL) with interactive flashcards and quizzes.
                                     </p>
+                                    {vocabStats.totalReviewed > 0 && (
+                                        <div className="flex gap-4 mb-4">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                                                <span className="text-sm text-gray-600">{vocabStats.totalReviewed} reviewed</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Award className="w-4 h-4 text-yellow-500" />
+                                                <span className="text-sm text-gray-600">{vocabStats.mastered} mastered</span>
+                                            </div>
+                                        </div>
+                                    )}
                                     <Link
                                         href="/practice/vocabulary"
                                         className="inline-flex items-center gap-2 text-emerald-600 font-semibold hover:text-emerald-700 hover:underline"

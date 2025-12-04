@@ -13,6 +13,11 @@ export default async function Dashboard() {
         redirect("/api/auth/signin");
     }
 
+    // Redirect admins to admin dashboard
+    if (session.user?.role === 'ADMIN') {
+        redirect("/admin");
+    }
+
     // Fetch user's test sessions with responses to get sub-scores
     let testSessions: any[] = [];
     let averageScores = {

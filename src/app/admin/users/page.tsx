@@ -2,13 +2,15 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
+import PaginationControls from "@/components/ui/pagination-controls";
+
 export default async function UserListPage({
     searchParams,
 }: {
-    searchParams: { q?: string; page?: string };
+    searchParams: Promise<{ q?: string; page?: string }>;
 }) {
-    const query = searchParams.q || "";
-    const page = parseInt(searchParams.page || "1");
+    const { q: query = "", page: pageString = "1" } = await searchParams;
+    const page = parseInt(pageString);
     const limit = 10;
     const skip = (page - 1) * limit;
 
@@ -106,30 +108,12 @@ export default async function UserListPage({
                 </table>
             </div>
 
-            {/* Pagination */}
-            <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-500">
-                    Showing {skip + 1} to {Math.min(skip + limit, total)} of {total} users
-                </p>
-                <div className="flex gap-2">
-                    {page > 1 && (
-                        <Link
-                            href={`/admin/users?page=${page - 1}&q=${query}`}
-                            className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                        >
-                            <ChevronLeft className="w-4 h-4" />
-                        </Link>
-                    )}
-                    {page < totalPages && (
-                        <Link
-                            href={`/admin/users?page=${page + 1}&q=${query}`}
-                            className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                        >
-                            <ChevronRight className="w-4 h-4" />
-                        </Link>
-                    )}
-                </div>
-            </div>
+            <PaginationControls
+                hasNextPage={page < totalPages}
+                hasPrevPage={page > 1}
+                totalPages={totalPages}
+                totalCount={total}
+            />
         </div>
     );
 }

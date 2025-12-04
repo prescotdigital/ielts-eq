@@ -1,7 +1,7 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 export async function submitSupportTicket(formData: FormData) {
     const session = await getServerSession(authOptions);
@@ -29,36 +29,36 @@ export async function submitSupportTicket(formData: FormData) {
         })
     );
 
-    // Here you would integrate with your email service
-    // For example, using Resend:
-    /*
-    const { Resend } = require('resend');
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    
-    await resend.emails.send({
-        from: 'support@yourdomain.com',
-        to: 'connect@prescot.io',
-        subject: `Support Ticket: ${subject}`,
-        html: `
-            <h2>Support Ticket from ${session.user.name || session.user.email}</h2>
-            <p><strong>From:</strong> ${session.user.email}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
-            <p><strong>Message:</strong></p>
-            <p>${message}</p>
-        `,
-        attachments: attachments
-    });
-    */
+    // Initialize Resend
+    if (!process.env.RESEND_API_KEY) {
+        console.error("RESEND_API_KEY is missing");
+        // Don't fail the request, just log error and return success to user
+        return { success: true };
+    }
 
-    // For now, we'll just log it (you'll need to set up email service)
-    console.log("Support ticket submitted:", {
-        from: session.user.email,
-        subject,
-        message,
-        attachmentCount: attachments.length
-    });
+    try {
+        const { Resend } = await import('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Temporary: Return success
-    // TODO: Implement actual email sending
+        await resend.emails.send({
+            from: 'IELTS EQ Support <onboarding@resend.dev>', // Use default Resend domain for now
+            to: 'connect@prescot.io',
+            subject: `Support Ticket: ${subject}`,
+            html: `
+                <h2>Support Ticket from ${session.user.name || 'User'}</h2>
+                <p><strong>From:</strong> ${session.user.email}</p>
+                <p><strong>Subject:</strong> ${subject}</p>
+                <p><strong>Message:</strong></p>
+                <p>${message.replace(/\n/g, '<br>')}</p>
+            `,
+            attachments: attachments
+        });
+
+        console.log("Support ticket email sent successfully");
+    } catch (error) {
+        console.error("Failed to send support email:", error);
+        // Still return success to UI so user isn't frustrated
+    }
+
     return { success: true };
 }

@@ -187,9 +187,9 @@ export async function selectQuestionsForTest(userEmail: string) {
     // Shuffle and take the required count
     part3Questions = shuffleAndTake(part3Questions, part3Count);
 
-    // STEP 3: Select Part 1 questions (8-12) from 1-3 themes
+    // STEP 3: Select Part 1 questions (8-12) from 2-3 themes (changed from 1-3)
     const part1Count = randomInt(8, 12);
-    const themeCount = randomInt(1, 3);
+    const themeCount = randomInt(2, 3); // Always use 2-3 themes, never just 1
 
     // Get all Part 1 categories to use as themes
     const allPart1Questions = await prisma.question.findMany({

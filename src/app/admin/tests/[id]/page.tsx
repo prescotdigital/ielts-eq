@@ -5,10 +5,12 @@ import { ArrowLeft, FileText, Code, MessageSquare } from "lucide-react";
 export default async function TestDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
+
     const test = await prisma.testSession.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
             user: true,
             responses: {

@@ -163,19 +163,15 @@ export default function VocabularyPage() {
                                 <div className="space-y-3">
                                     <p className="text-sm font-medium text-gray-700">Select Difficulty (Sublist):</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {[1, 2, 3, 4, 5].map((num) => {
-                                            const hasProgress = sublistProgress[num]?.reviewed > 0;
-                                            return (
-                                                <button
-                                                    key={num}
-                                                    onClick={() => startSession("flashcards", num)}
-                                                    className="px-4 py-2 rounded-lg border border-gray-200 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all text-sm font-medium flex items-center gap-1.5"
-                                                >
-                                                    Level {num}
-                                                    {hasProgress && <span className="text-emerald-600">✓</span>}
-                                                </button>
-                                            );
-                                        })}
+                                        {[1, 2, 3, 4, 5].map((num) => (
+                                            <button
+                                                key={num}
+                                                onClick={() => startSession("flashcards", num)}
+                                                className="px-4 py-2 rounded-lg border border-gray-200 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all text-sm font-medium"
+                                            >
+                                                Level {num}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -191,19 +187,15 @@ export default function VocabularyPage() {
                                 <div className="space-y-3">
                                     <p className="text-sm font-medium text-gray-700">Select Difficulty (Sublist):</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {[1, 2, 3, 4, 5].map((num) => {
-                                            const hasProgress = sublistProgress[num]?.reviewed > 0;
-                                            return (
-                                                <button
-                                                    key={num}
-                                                    onClick={() => startSession("quiz", num)}
-                                                    className="px-4 py-2 rounded-lg border border-gray-200 hover:border-purple-500 hover:bg-purple-50 hover:text-purple-700 transition-all text-sm font-medium flex items-center gap-1.5"
-                                                >
-                                                    Level {num}
-                                                    {hasProgress && <span className="text-purple-600">✓</span>}
-                                                </button>
-                                            );
-                                        })}
+                                        {[1, 2, 3, 4, 5].map((num) => (
+                                            <button
+                                                key={num}
+                                                onClick={() => startSession("quiz", num)}
+                                                className="px-4 py-2 rounded-lg border border-gray-200 hover:border-purple-500 hover:bg-purple-50 hover:text-purple-700 transition-all text-sm font-medium"
+                                            >
+                                                Level {num}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -219,19 +211,15 @@ export default function VocabularyPage() {
                                 <div className="space-y-3">
                                     <p className="text-sm font-medium text-gray-700">Select Difficulty (Sublist):</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {[1, 2, 3, 4, 5].map((num) => {
-                                            const hasProgress = sublistProgress[num]?.reviewed > 0;
-                                            return (
-                                                <button
-                                                    key={num}
-                                                    onClick={() => startSession("matching", num)}
-                                                    className="px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-all text-sm font-medium flex items-center gap-1.5"
-                                                >
-                                                    Level {num}
-                                                    {hasProgress && <span className="text-blue-600">✓</span>}
-                                                </button>
-                                            );
-                                        })}
+                                        {[1, 2, 3, 4, 5].map((num) => (
+                                            <button
+                                                key={num}
+                                                onClick={() => startSession("matching", num)}
+                                                className="px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-all text-sm font-medium"
+                                            >
+                                                Level {num}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

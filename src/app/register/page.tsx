@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, ArrowRight, Loader2 } from "lucide-react";
@@ -17,11 +18,12 @@ export default function RegisterPage() {
         setError("");
 
         const formData = new FormData(e.currentTarget);
-        const name = formData.get("name");
-        const email = formData.get("email");
-        const password = formData.get("password");
+        const name = formData.get("name") as string;
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
 
         try {
+            // Step 1: Register the user
             const res = await fetch("/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -29,7 +31,19 @@ export default function RegisterPage() {
             });
 
             if (res.ok) {
-                router.push("/signin?registered=true");
+                // Step 2: Automatically sign them in
+                const result = await signIn("credentials", {
+                    email,
+                    password,
+                    redirect: false,
+                });
+
+                if (result?.ok) {
+                    router.push("/dashboard");
+                } else {
+                    setError("Account created but sign-in failed. Please sign in manually.");
+                    setTimeout(() => router.push("/signin"), 2000);
+                }
             } else {
                 const data = await res.json();
                 setError(data.message || "Registration failed");

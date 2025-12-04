@@ -44,6 +44,7 @@ model User {
   pronunciationProgress UserPronunciationProgress[]
   subscriptions     Subscription[]
   analyticsEvents   AnalyticsEvent[]
+  loginAttempts     LoginAttempt[]
 }
 
 model Subscription {
@@ -230,4 +231,23 @@ model UserPronunciationProgress {
   drill          PronunciationDrill @relation(fields: [drillId], references: [id], onDelete: Cascade)
   
   @@unique([userId, drillId])
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  provider  String   // "google", "credentials"
+  success   Boolean
+  error     String?  // Error code: "OAuthAccountNotLinked", "CredentialsSignin", etc.
+  ip        String?  // IP address
+  userAgent String?  // Browser/device info
+  
+  createdAt DateTime @default(now())
+  
+  @@index([email])
+  @@index([userId])
+  @@index([createdAt])
 }

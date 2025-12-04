@@ -75,7 +75,33 @@ export const authOptions: NextAuthOptions = {
             }
             return token;
         },
-        async signIn() {
+        async signIn({ user, account, profile }) {
+            // Log login attempt
+            try {
+                const email = user?.email || (profile as any)?.email;
+                const provider = account?.provider || 'unknown';
+
+                if (email) {
+                    // Find user by email to get userId
+                    const existingUser = await prisma.user.findUnique({
+                        where: { email }
+                    });
+
+                    await prisma.loginAttempt.create({
+                        data: {
+                            email,
+                            userId: existingUser?.id,
+                            provider,
+                            success: true,
+                            error: null,
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to log login attempt:', error);
+                // Don't block login if logging fails
+            }
+
             return true;
         }
     },

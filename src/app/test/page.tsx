@@ -192,7 +192,15 @@ export default function TestPage() {
     const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
+
+            // Determine supported MIME type (Safari uses audio/mp4, Chrome uses audio/webm)
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+                ? 'audio/webm'
+                : MediaRecorder.isTypeSupported('audio/mp4')
+                    ? 'audio/mp4'
+                    : 'audio/mpeg'; // Fallback
+
+            const mediaRecorder = new MediaRecorder(stream, { mimeType });
             mediaRecorderRef.current = mediaRecorder;
             chunksRef.current = [];
 
@@ -201,7 +209,7 @@ export default function TestPage() {
             };
 
             mediaRecorder.onstop = async () => {
-                const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                const audioBlob = new Blob(chunksRef.current, { type: mimeType });
                 await handleUploadAndAnalyze(audioBlob);
             };
 
@@ -233,9 +241,12 @@ export default function TestPage() {
         setIsAnalyzing(true);
 
         try {
-            // 1. Upload
+            // 1. Upload - determine file extension from MIME type
+            const extension = audioBlob.type.includes('webm') ? 'webm'
+                : audioBlob.type.includes('mp4') ? 'mp4'
+                    : 'mp3';
             const formData = new FormData();
-            formData.append('file', audioBlob, 'recording.webm');
+            formData.append('file', audioBlob, `recording.${extension}`);
             const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
             if (!uploadRes.ok) throw new Error('Upload failed');
             const { url } = await uploadRes.json();

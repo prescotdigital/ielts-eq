@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, ArrowRight, Wand2, Loader2, Check, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Wand2, Loader2, Check, Sparkles, RefreshCw, Image as ImageIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface BlogCategory {
@@ -22,7 +21,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
     const [keyword, setKeyword] = useState("");
     const [categoryId, setCategoryId] = useState(categories[0]?.id || "");
 
-    //Step 2: Titles
+    // Step 2: Titles
     const [titleOptions, setTitleOptions] = useState<string[]>([]);
     const [selectedTitle, setSelectedTitle] = useState("");
 
@@ -36,10 +35,10 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
     const [contentLength, setContentLength] = useState("medium");
     const [content, setContent] = useState("");
 
-    // Step 5: Image
+    // Step 5: Review & Image
     const [featuredImage, setFeaturedImage] = useState("");
+    const [suggestedImages, setSuggestedImages] = useState<any[]>([]);
 
-    // Generate slug from title
     const generateSlug = (title: string) => {
         return title
             .toLowerCase()
@@ -49,7 +48,6 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
             .trim();
     };
 
-    // Step 2: Generate Titles
     const handleGenerateTitles = async () => {
         if (!idea.trim()) {
             setError("Please enter your blog idea");
@@ -78,7 +76,6 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
         }
     };
 
-    // Step 3: Generate Excerpts
     const handleGenerateExcerpts = async () => {
         if (!selectedTitle) {
             setError("Please select a title");
@@ -108,7 +105,6 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
         }
     };
 
-    // Step 4: Generate Content
     const handleGenerateContent = async () => {
         setIsLoading(true);
         setError("");
@@ -130,6 +126,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
             if (!res.ok) throw new Error(data.error);
 
             setContent(data.content);
+            // Auto-fetch image suggestions when content is ready
+            handleFetchImageSuggestions(selectedTitle);
             setStep(4);
         } catch (err: any) {
             setError(err.message || "Failed to generate content");
@@ -138,8 +136,30 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
         }
     };
 
-    // Final: Create Blog Post
-    const handleCreatePost = async () => {
+    const handleFetchImageSuggestions = async (title: string) => {
+        try {
+            const res = await fetch("/api/ai/suggest-images", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query: title }),
+            });
+
+            const data = await res.json();
+            if (data.images && data.images.length > 0) {
+                setSuggestedImages(data.images);
+                setFeaturedImage(data.images[0].url); // Auto-select first image
+            }
+        } catch (err) {
+            console.error('Failed to fetch image suggestions:', err);
+            // Gracefully fail - images are optional
+        }
+    };
+
+    const handleTryAnotherImage = () => {
+        handleFetchImageSuggestions(keyword || selectedTitle);
+    };
+
+    const handleCreatePost = async (published: boolean) => {
         setIsLoading(true);
         setError("");
 
@@ -154,7 +174,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                     content,
                     featuredImage: featuredImage || null,
                     categoryId,
-                    published: false, // Save as draft
+                    published,
                 }),
             });
 
@@ -176,8 +196,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
         { number: 2, name: "Title", completed: step > 2 },
         { number: 3, name: "Details", completed: step > 3 },
         { number: 4, name: "Content", completed: step > 4 },
-        { number: 5, name: "Image", completed: step > 5 },
-        { number: 6, name: "Review", completed: step > 6 },
+        { number: 5, name: "Review", completed: step > 5 },
     ];
 
     return (
@@ -205,10 +224,10 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                             <div className="flex flex-col items-center">
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${s.completed
-                                        ? "bg-emerald-500 text-white"
-                                        : step === s.number
-                                            ? "bg-purple-500 text-white"
-                                            : "bg-gray-200 text-gray-600"
+                                            ? "bg-emerald-500 text-white"
+                                            : step === s.number
+                                                ? "bg-purple-500 text-white"
+                                                : "bg-gray-200 text-gray-600"
                                         }`}
                                 >
                                     {s.completed ? <Check className="w-5 h-5" /> : s.number}
@@ -219,8 +238,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                 <div className={`w-16 h-1 mx-2 ${s.completed ? "bg-emerald-500" : "bg-gray-200"}`} />
                             )}
                         </div>
-                    ))}
-                </div>
+                    ))}</div>
             </div>
 
             {error && (
@@ -231,6 +249,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
 
             {/* Step Content */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                {/* Steps 1-3 remain the same... continuing in next file chunk */}
                 {/* Step 1: Idea Input */}
                 {step === 1 && (
                     <div className="space-y-6">
@@ -274,7 +293,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                         <button
                             onClick={handleGenerateTitles}
                             disabled={isLoading}
-                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-4 px-6 rounded-lg transition-all flex items-center justify center gap-2 disabled:opacity-50"
+                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-4 px-6 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                             {isLoading ? (
                                 <>
@@ -285,14 +304,14 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                 <>
                                     <Wand2 className="w-5 h-5" />
                                     Generate Titles
-                                    <ArrowRight className="w-5 h-5 ml-auto" />
+                                    <Arrow Right className="w-5 h-5 ml-auto" />
                                 </>
                             )}
                         </button>
                     </div>
                 )}
 
-                {/* Step 2: Title Selection */}
+                {/* Step 2: Title Selection - SAME AS BEFORE */}
                 {step === 2 && (
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-gray-900">Choose your title</h2>
@@ -304,8 +323,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                     key={idx}
                                     onClick={() => setSelectedTitle(title)}
                                     className={`w-full text-left p-4 border-2 rounded-lg transition-all ${selectedTitle === title
-                                        ? "border-purple-500 bg-purple-50"
-                                        : "border-gray-200 hover:border-purple-300"
+                                            ? "border-purple-500 bg-purple-50"
+                                            : "border-gray-200 hover:border-purple-300"
                                         }`}
                                 >
                                     <div className="flex items-start gap-3">
@@ -362,7 +381,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                     </div>
                 )}
 
-                {/* Step 3: Slug & Excerpt */}
+                {/* Step 3: Slug & Excerpt - SAME AS BEFORE */}
                 {step === 3 && (
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-gray-900">Slug & Meta Description</h2>
@@ -386,8 +405,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                         key={idx}
                                         onClick={() => setSelectedExcerpt(excerpt)}
                                         className={`w-full text-left p-4 border-2 rounded-lg transition-all ${selectedExcerpt === excerpt
-                                            ? "border-purple-500 bg-purple-50"
-                                            : "border-gray-200 hover:border-purple-300"
+                                                ? "border-purple-500 bg-purple-50"
+                                                : "border-gray-200 hover:border-purple-300"
                                             }`}
                                     >
                                         <div className="flex items-start gap-3">
@@ -454,8 +473,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                         key={style.value}
                                         onClick={() => setContentStyle(style.value)}
                                         className={`p-4 border-2 rounded-lg text-left transition-all ${contentStyle === style.value
-                                            ? "border-purple-500 bg-purple-50"
-                                            : "border-gray-200 hover:border-purple-300"
+                                                ? "border-purple-500 bg-purple-50"
+                                                : "border-gray-200 hover:border-purple-300"
                                             }`}
                                     >
                                         <p className="font-medium text-gray-900">{style.label}</p>
@@ -477,8 +496,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                         key={len.value}
                                         onClick={() => setContentLength(len.value)}
                                         className={`p-4 border-2 rounded-lg text-center transition-all ${contentLength === len.value
-                                            ? "border-purple-500 bg-purple-50"
-                                            : "border-gray-200 hover:border-purple-300"
+                                                ? "border-purple-500 bg-purple-50"
+                                                : "border-gray-200 hover:border-purple-300"
                                             }`}
                                     >
                                         <p className="font-medium text-gray-900">{len.label}</p>
@@ -508,7 +527,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                 ) : (
                                     <>
                                         <Wand2 className="w-5 h-5" />
-                                        Generate Content
+                                        Generate Content & Review
                                     </>
                                 )}
                             </button>
@@ -516,131 +535,111 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                     </div>
                 )}
 
-                {/* Step 4: Content Editor */}
+                {/* Step 4: Content Editor & Step 5: Review with Image */}
                 {step === 4 && content && (
                     <div className="space-y-6">
-                        <h2 className="text-xl font-bold text-gray-900">Edit Your Content</h2>
+                        <h2 className="text-xl font-bold text-gray-900">Review & Publish</h2>
 
+                        {/* Content Editor */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Content (Markdown)</label>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="block text-sm font-medium text-gray-700">Content (Markdown)</label>
+                                <button
+                                    onClick={() => setContent("")}
+                                    className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1"
+                                >
+                                    <RefreshCw className="w-3 h-3" />
+                                    Regenerate
+                                </button>
+                            </div>
                             <textarea
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                rows={20}
+                                rows={12}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 font-mono text-sm"
                             />
                         </div>
 
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setContent("")}
-                                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                            >
-                                Regenerate
-                            </button>
-                            <button
-                                onClick={() => setStep(5)}
-                                className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center gap-2"
-                            >
-                                Continue to Image
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Step 5: Featured Image */}
-                {step === 5 && (
-                    <div className="space-y-6">
-                        <h2 className="text-xl font-bold text-gray-900">Featured Image</h2>
-                        <p className="text-gray-600">Paste a URL to a royalty-free image (e.g., from Unsplash, Pexels)</p>
-
+                        {/* Featured Image Section */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                            <input
-                                type="url"
-                                value={featuredImage}
-                                onChange={(e) => setFeaturedImage(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                                placeholder="https://images.unsplash.com/..."
-                            />
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+
+                            {featuredImage && (
+                                <div className="mb-4">
+                                    <img src={featuredImage} alt="Featured" className="w-full max-w-2xl h-64 object-cover rounded-lg" />
+                                </div>
+                            )}
+
+                            <div className="flex gap-2 mb-4">
+                                <input
+                                    type="url"
+                                    value={featuredImage}
+                                    onChange={(e) => setFeaturedImage(e.target.value)}
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="Or paste image URL..."
+                                />
+                                {suggestedImages.length > 0 && (
+                                    <button
+                                        onClick={handleTryAnotherImage}
+                                        className="px-4 py-2 border border-purple-300 text-purple-600 rounded-lg hover:bg-purple-50 flex items-center gap-2"
+                                    >
+                                        <RefreshCw className="w-4 h-4" />
+                                        Try Another
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
-                        {featuredImage && (
-                            <div>
-                                <p className="text-sm font-medium text-gray-700 mb-2">Preview</p>
-                                <img src={featuredImage} alt="Preview" className="w-full max-w-2xl h-64 object-cover rounded-lg" />
-                            </div>
-                        )}
-
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setStep(4)}
-                                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                            >
-                                Back
-                            </button>
-                            <button
-                                onClick={() => setStep(6)}
-                                className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center gap-2"
-                            >
-                                Review & Publish
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Step 6: Review */}
-                {step === 6 && (
-                    <div className="space-y-6">
-                        <h2 className="text-xl font-bold text-gray-900">Review Your Post</h2>
-
-                        <div className="space-y-4">
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                                <p className="text-sm text-gray-600 mb-1">Title</p>
-                                <p className="font-medium text-gray-900">{selectedTitle}</p>
-                            </div>
-
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                                <p className="text-sm text-gray-600 mb-1">Excerpt</p>
-                                <p className="text-gray-900">{selectedExcerpt}</p>
-                            </div>
-
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                                <p className="text-sm text-gray-600 mb-1">URL</p>
-                                <p className="text-gray-900 font-mono text-sm">ieltseq.com/blog/{slug}</p>
-                            </div>
-
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                                <p className="text-sm text-gray-600 mb-2">Content Preview</p>
-                                <div className="prose max-w-none text-sm">
-                                    <ReactMarkdown>{content.slice(0, 500) + "..."}</ReactMarkdown>
+                        {/* Post Details Summary */}
+                        <div className="space-y-3 pt-4 border-t border-gray-200">
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p className="text-gray-600">Title</p>
+                                    <p className="font-medium">{selectedTitle}</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-600">URL</p>
+                                    <p className="font-mono text-xs">ieltseq.com/blog/{slug}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex gap-3">
+                        {/* Action Buttons */}
+                        <div className="flex gap-3 pt-4">
                             <button
-                                onClick={() => setStep(5)}
+                                onClick={() => setContent("")}
                                 className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                             >
-                                Back
+                                Back to Edit
                             </button>
                             <button
-                                onClick={handleCreatePost}
+                                onClick={() => handleCreatePost(false)}
                                 disabled={isLoading}
-                                className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium py-4 px-6 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <>
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                        Creating Post...
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    "Save as Draft"
+                                )}
+                            </button>
+                            <button
+                                onClick={() => handleCreatePost(true)}
+                                disabled={isLoading}
+                                className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium py-3 px-6 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Publishing...
                                     </>
                                 ) : (
                                     <>
-                                        <Check className="w-5 h-5" />
-                                        Create Draft Post
+                                        <Check className="w-4 h-4" />
+                                        Publish Now
                                     </>
                                 )}
                             </button>

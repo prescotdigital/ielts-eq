@@ -92,7 +92,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {/* Content */}
             <article className="max-w-4xl mx-auto px-4 py-12">
                 <div className="bg-white rounded-xl shadow-sm p-8 md:p-12">
-                    <div className="prose prose-lg max-w-none">
+                    <div className="prose prose-lg prose-emerald max-w-none
+                        prose-headings:font-bold prose-headings:text-gray-900
+                        prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-4
+                        prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3
+                        prose-h4:text-xl prose-h4:mt-6 prose-h4:mb-2
+                        prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
+                        prose-a:text-[#52B0C9] prose-a:no-underline hover:prose-a:underline
+                        prose-strong:text-gray-900 prose-strong:font-semibold
+                        prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6
+                        prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6
+                        prose-li:my-2
+                        prose-blockquote:border-l-4 prose-blockquote:border-[#52B0C9] prose-blockquote:pl-4 prose-blockquote:italic
+                        prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+                    ">
                         <ReactMarkdown>{post.content}</ReactMarkdown>
                     </div>
                 </div>

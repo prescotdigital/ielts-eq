@@ -47,8 +47,15 @@ export async function POST(req: Request) {
             max_tokens: 300,
         });
 
-        const content = completion.choices[0].message.content;
-        const titles = JSON.parse(content || '[]');
+        const content = completion.choices[0].message.content || '[]';
+
+        // Remove markdown code blocks if present
+        const cleanedContent = content
+            .replace(/```json\n?/g, '')
+            .replace(/```\n?/g, '')
+            .trim();
+
+        const titles = JSON.parse(cleanedContent);
 
         return NextResponse.json({ titles });
     } catch (error: any) {

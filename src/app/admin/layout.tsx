@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Users, FileText, BarChart3, Settings, LogOut, Shield } from "lucide-react";
+import { LayoutDashboard, Users, FileText, BarChart3, Settings, LogOut, Shield, BookOpen } from "lucide-react";
 
 export default async function AdminLayout({
     children,
@@ -51,6 +51,10 @@ export default async function AdminLayout({
                     <Link href="/admin/login-attempts" className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
                         <Shield className="w-5 h-5" />
                         Login Attempts
+                    </Link>
+                    <Link href="/admin/blog" className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                        <BookOpen className="w-5 h-5" />
+                        Blog
                     </Link>
                     <Link href="/admin/analytics" className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
                         <BarChart3 className="w-5 h-5" />

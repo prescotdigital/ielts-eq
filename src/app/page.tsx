@@ -291,12 +291,15 @@ export default function Home() {
               </div>
               <span className="text-sm text-gray-600">© 2025 IELTS EQ. All rights reserved.</span>
             </div>
-            <div className="flex gap-6 text-sm">
-              <Link href="/legal/terms" className="text-gray-600 hover:text-emerald-600 transition-colors">
-                Terms of Service
+            <div className="hidden md:flex items-center gap-8">
+              <Link href="/practice/vocabulary" className="text-gray-600 hover:text-emerald-600 transition-colors font-medium">
+                Practice
               </Link>
-              <Link href="/legal/privacy" className="text-gray-600 hover:text-emerald-600 transition-colors">
-                Privacy Policy
+              <Link href="/blog" className="text-gray-600 hover:text-emerald-600 transition-colors font-medium">
+                Blog
+              </Link>
+              <Link href="/dashboard" className="text-gray-600 hover:text-emerald-600 transition-colors font-medium">
+                Dashboard
               </Link>
             </div>
           </div>

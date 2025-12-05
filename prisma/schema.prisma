@@ -45,6 +45,7 @@ model User {
   subscriptions     Subscription[]
   analyticsEvents   AnalyticsEvent[]
   loginAttempts     LoginAttempt[]
+  blogPosts         BlogPost[]       @relation("BlogPosts")
 }
 
 model Subscription {
@@ -262,4 +263,54 @@ model PasswordResetToken {
   @@index([email])
   @@index([token])
   @@index([expires])
+}
+
+model BlogPost {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  title         String
+  excerpt       String        // Short description for cards/previews
+  content       String        @db.Text // Full markdown/HTML content
+  featuredImage String?       // URL to featured image
+  published     Boolean       @default(false)
+  publishedAt   DateTime?
+  author        User          @relation("BlogPosts", fields: [authorId], references: [id])
+  authorId      String
+  category      BlogCategory  @relation(fields: [categoryId], references: [id])
+  categoryId    String
+  tags          BlogPostTag[]
+  viewCount     Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([slug])
+  @@index([published])
+  @@index([categoryId])
+  @@index([publishedAt])
+}
+
+model BlogCategory {
+  id    String     @id @default(cuid())
+  name  String     @unique
+  slug  String     @unique
+  description String?
+  posts BlogPost[]
+}
+
+model BlogTag {
+  id    String        @id @default(cuid())
+  name  String        @unique
+  slug  String        @unique
+  posts BlogPostTag[]
+}
+
+model BlogPostTag {
+  postId String
+  tagId  String
+  post   BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([postId, tagId])
+  @@index([postId])
+  @@index([tagId])
 }

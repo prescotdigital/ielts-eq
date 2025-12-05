@@ -94,17 +94,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <div className="bg-white rounded-xl shadow-sm p-8 md:p-12">
                     <div className="prose prose-lg prose-emerald max-w-none
                         prose-headings:font-bold prose-headings:text-gray-900
-                        prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-4
-                        prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3
-                        prose-h4:text-xl prose-h4:mt-6 prose-h4:mb-2
-                        prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
+                        prose-h1:text-4xl prose-h1:mt-16 prose-h1:mb-6
+                        prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-6 prose-h2:leading-tight
+                        prose-h3:text-2xl prose-h3:mt-12 prose-h3:mb-4 prose-h3:leading-snug
+                        prose-h4:text-xl prose-h4:mt-8 prose-h4:mb-3
+                        prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6 prose-p:mt-0
                         prose-a:text-[#52B0C9] prose-a:no-underline hover:prose-a:underline
                         prose-strong:text-gray-900 prose-strong:font-semibold
-                        prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6
-                        prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6
-                        prose-li:my-2
-                        prose-blockquote:border-l-4 prose-blockquote:border-[#52B0C9] prose-blockquote:pl-4 prose-blockquote:italic
+                        prose-ul:my-8 prose-ul:list-disc prose-ul:pl-6 prose-ul:space-y-3
+                        prose-ol:my-8 prose-ol:list-decimal prose-ol:pl-6 prose-ol:space-y-4
+                        prose-li:my-3 prose-li:leading-relaxed
+                        prose-blockquote:border-l-4 prose-blockquote:border-[#52B0C9] prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6
                         prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+                        prose-pre:my-6 prose-pre:bg-gray-50
+                        [&>*:first-child]:mt-0
                     ">
                         <ReactMarkdown>{post.content}</ReactMarkdown>
                     </div>

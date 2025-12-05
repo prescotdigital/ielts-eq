@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 import PaginationControls from "@/components/ui/pagination-controls";
+import PasswordResetButton from "@/components/admin/PasswordResetButton";
 
 export default async function UserListPage({
     searchParams,
@@ -95,12 +96,11 @@ export default async function UserListPage({
                                     {new Date(user.createdAt).toLocaleDateString()}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <Link
-                                        href={`/admin/users/${user.id}`}
-                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                                    >
-                                        View Details
-                                    </Link>
+                                    <PasswordResetButton
+                                        userId={user.id}
+                                        userEmail={user.email}
+                                        hasPassword={!!user.password}
+                                    />
                                 </td>
                             </tr>
                         ))}

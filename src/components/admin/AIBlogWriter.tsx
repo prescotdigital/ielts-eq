@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ArrowLeft, ArrowRight, Wand2, Loader2, Check, Sparkles, RefreshCw, Image as ImageIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
@@ -224,10 +225,10 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                             <div className="flex flex-col items-center">
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${s.completed
-                                            ? "bg-emerald-500 text-white"
-                                            : step === s.number
-                                                ? "bg-purple-500 text-white"
-                                                : "bg-gray-200 text-gray-600"
+                                        ? "bg-emerald-500 text-white"
+                                        : step === s.number
+                                            ? "bg-purple-500 text-white"
+                                            : "bg-gray-200 text-gray-600"
                                         }`}
                                 >
                                     {s.completed ? <Check className="w-5 h-5" /> : s.number}
@@ -323,8 +324,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                     key={idx}
                                     onClick={() => setSelectedTitle(title)}
                                     className={`w-full text-left p-4 border-2 rounded-lg transition-all ${selectedTitle === title
-                                            ? "border-purple-500 bg-purple-50"
-                                            : "border-gray-200 hover:border-purple-300"
+                                        ? "border-purple-500 bg-purple-50"
+                                        : "border-gray-200 hover:border-purple-300"
                                         }`}
                                 >
                                     <div className="flex items-start gap-3">
@@ -405,8 +406,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                         key={idx}
                                         onClick={() => setSelectedExcerpt(excerpt)}
                                         className={`w-full text-left p-4 border-2 rounded-lg transition-all ${selectedExcerpt === excerpt
-                                                ? "border-purple-500 bg-purple-50"
-                                                : "border-gray-200 hover:border-purple-300"
+                                            ? "border-purple-500 bg-purple-50"
+                                            : "border-gray-200 hover:border-purple-300"
                                             }`}
                                     >
                                         <div className="flex items-start gap-3">
@@ -473,8 +474,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                         key={style.value}
                                         onClick={() => setContentStyle(style.value)}
                                         className={`p-4 border-2 rounded-lg text-left transition-all ${contentStyle === style.value
-                                                ? "border-purple-500 bg-purple-50"
-                                                : "border-gray-200 hover:border-purple-300"
+                                            ? "border-purple-500 bg-purple-50"
+                                            : "border-gray-200 hover:border-purple-300"
                                             }`}
                                     >
                                         <p className="font-medium text-gray-900">{style.label}</p>
@@ -496,8 +497,8 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                         key={len.value}
                                         onClick={() => setContentLength(len.value)}
                                         className={`p-4 border-2 rounded-lg text-center transition-all ${contentLength === len.value
-                                                ? "border-purple-500 bg-purple-50"
-                                                : "border-gray-200 hover:border-purple-300"
+                                            ? "border-purple-500 bg-purple-50"
+                                            : "border-gray-200 hover:border-purple-300"
                                             }`}
                                     >
                                         <p className="font-medium text-gray-900">{len.label}</p>

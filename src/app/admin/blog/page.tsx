@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Edit, Eye, EyeOff, Trash } from "lucide-react";
+import { Plus, Edit, Eye, EyeOff, Trash, Sparkles } from "lucide-react";
 
 export default async function AdminBlogPage() {
     const posts = await prisma.blogPost.findMany({
@@ -23,13 +23,22 @@ export default async function AdminBlogPage() {
                     <h1 className="text-2xl font-bold text-gray-900">Blog Posts</h1>
                     <p className="text-gray-500 mt-1">Manage Beyond the Band Blog content</p>
                 </div>
-                <Link
-                    href="/admin/blog/new"
-                    className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition-all"
-                >
-                    <Plus className="w-4 h-4" />
-                    New Post
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/admin/blog/ai-writer"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-2 px-4 rounded-lg transition-all shadow-lg"
+                    >
+                        <Sparkles className="w-4 h-4" />
+                        AI Writer
+                    </Link>
+                    <Link
+                        href="/admin/blog/new"
+                        className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition-all"
+                    >
+                        <Plus className="w-4 h-4" />
+                        New Post
+                    </Link>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

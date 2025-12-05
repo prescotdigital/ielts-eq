@@ -46,6 +46,7 @@ model User {
   analyticsEvents   AnalyticsEvent[]
   loginAttempts     LoginAttempt[]
   blogPosts         BlogPost[]       @relation("BlogPosts")
+  blogDrafts        BlogDraft[]      @relation("BlogDrafts")
 }
 
 model Subscription {
@@ -313,4 +314,33 @@ model BlogPostTag {
   @@id([postId, tagId])
   @@index([postId])
   @@index([tagId])
+}
+
+model BlogDraft {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation("BlogDrafts", fields: [userId], references: [id], onDelete: Cascade)
+  
+  step            Int      @default(1) // Wizard progress (1-6)
+  idea            String?  @db.Text
+  keywords        String?
+  categoryId      String?
+  
+  titleOptions    Json?    // Array of generated titles
+  selectedTitle   String?
+  
+  slug            String?
+  excerptOptions  Json?    // Array of generated excerpts
+  selectedExcerpt String?
+  
+  style           String?  // notice, publication, editorial, tutorial
+  length          String?  // short, medium, long
+  content         String?  @db.Text
+  
+  featuredImage   String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId])
 }

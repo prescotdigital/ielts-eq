@@ -305,7 +305,7 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                 <>
                                     <Wand2 className="w-5 h-5" />
                                     Generate Titles
-                                    <Arrow Right className="w-5 h-5 ml-auto" />
+                                    <ArrowRight className="w-5 h-5 ml-auto" />
                                 </>
                             )}
                         </button>

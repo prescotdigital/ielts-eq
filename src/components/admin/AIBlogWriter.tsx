@@ -40,6 +40,14 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
     const [featuredImage, setFeaturedImage] = useState("");
     const [suggestedImages, setSuggestedImages] = useState<any[]>([]);
 
+    // AI Detection & Humanization
+    const [aiAnalysis, setAiAnalysis] = useState<any>(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [humanizedContent, setHumanizedContent] = useState("");
+    const [isHumanizing, setIsHumanizing] = useState(false);
+    const [userExamples, setUserExamples] = useState<string[]>(["", ""]);
+    const [showComparison, setShowComparison] = useState(false);
+
     const generateSlug = (title: string) => {
         return title
             .toLowerCase()
@@ -158,6 +166,79 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
 
     const handleTryAnotherImage = () => {
         handleFetchImageSuggestions(keyword || selectedTitle);
+    };
+
+    const handleAnalyzeContent = async () => {
+        setIsAnalyzing(true);
+        setError("");
+
+        try {
+            const res = await fetch("/api/ai/analyze-content", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+
+            setAiAnalysis(data);
+        } catch (err: any) {
+            setError(err.message || "Failed to analyze content");
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
+
+    const handleHumanizeContent = async () => {
+        setIsHumanizing(true);
+        setError("");
+
+        try {
+            const filteredExamples = userExamples.filter(ex => ex.trim().length > 0);
+
+            const res = await fetch("/api/ai/humanize-content", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content,
+                    userExamples: filteredExamples
+                }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+
+            setHumanizedContent(data.humanizedContent);
+            setShowComparison(true);
+
+            // Re-analyze humanized content
+            const analysisRes = await fetch("/api/ai/analyze-content", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: data.humanizedContent }),
+            });
+
+            const analysisData = await analysisRes.json();
+            if (analysisRes.ok) {
+                setAiAnalysis(analysisData);
+            }
+        } catch (err: any) {
+            setError(err.message || "Failed to humanize content");
+        } finally {
+            setIsHumanizing(false);
+        }
+    };
+
+    const handleAcceptHumanized = () => {
+        setContent(humanizedContent);
+        setHumanizedContent("");
+        setShowComparison(false);
+    };
+
+    const handleRejectHumanized = () => {
+        setHumanizedContent("");
+        setShowComparison(false);
     };
 
     const handleCreatePost = async (published: boolean) => {
@@ -589,6 +670,174 @@ export default function AIBlogWriter({ categories }: { categories: BlogCategory[
                                     </button>
                                 )}
                             </div>
+                        </div>
+
+                        {/* AI Detection & Humanization Section */}
+                        <div className="pt-6 border-t border-gray-200">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-gray-900">AI Detection Analysis</h3>
+                                {!aiAnalysis && (
+                                    <button
+                                        onClick={handleAnalyzeContent}
+                                        disabled={isAnalyzing}
+                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
+                                    >
+                                        {isAnalyzing ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                Analyzing...
+                                            </>
+                                        ) : (
+                                            "Analyze Content"
+                                        )}
+                                    </button>
+                                )}
+                            </div>
+
+                            {aiAnalysis && (
+                                <div className="space-y-4">
+                                    {/* AI Score Badge */}
+                                    <div className={`p-6 rounded-lg ${aiAnalysis.aiScore < 30 ? 'bg-green-50 border border-green-200' :
+                                            aiAnalysis.aiScore < 60 ? 'bg-yellow-50 border border-yellow-200' :
+                                                'bg-red-50 border border-red-200'
+                                        }`}>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-medium text-gray-700">AI Detection Score</span>
+                                            <span className={`text-3xl font-bold ${aiAnalysis.aiScore < 30 ? 'text-green-600' :
+                                                    aiAnalysis.aiScore < 60 ? 'text-yellow-600' :
+                                                        'text-red-600'
+                                                }`}>
+                                                {aiAnalysis.aiScore}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full bg-gray-200 rounded-full h-2">
+                                            <div
+                                                className={`h-2 rounded-full ${aiAnalysis.aiScore < 30 ? 'bg-green-500' :
+                                                        aiAnalysis.aiScore < 60 ? 'bg-yellow-500' :
+                                                            'bg-red-500'
+                                                    }`}
+                                                style={{ width: `${aiAnalysis.aiScore}%` }}
+                                            />
+                                        </div>
+                                        <p className="text-xs text-gray-600 mt-2">
+                                            {aiAnalysis.aiScore < 30 ? '✓ Excellent! Content appears human-written' :
+                                                aiAnalysis.aiScore < 60 ? '⚠ May be detectable as AI. Consider humanizing.' :
+                                                    '⚠ High AI detection risk. Humanization recommended.'}
+                                        </p>
+                                    </div>
+
+                                    {/* Issues and Recommendations */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-white p-4 rounded-lg border border-gray-200">
+                                            <h4 className="text-sm font-semibold text-gray-900 mb-2">Issues Detected</h4>
+                                            <ul className="space-y-1">
+                                                {aiAnalysis.issues.map((issue: string, idx: number) => (
+                                                    <li key={idx} className="text-xs text-gray-700 flex items-start gap-1">
+                                                        <span className="text-red-500 mt-0.5">•</span>
+                                                        <span>{issue}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div className="bg-white p-4 rounded-lg border border-gray-200">
+                                            <h4 className="text-sm font-semibold text-gray-900 mb-2">Recommendations</h4>
+                                            <ul className="space-y-1">
+                                                {aiAnalysis.recommendations.map((rec: string, idx: number) => (
+                                                    <li key={idx} className="text-xs text-gray-700 flex items-start gap-1">
+                                                        <span className="text-blue-500 mt-0.5">→</span>
+                                                        <span>{rec}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    {/* Humanize Button */}
+                                    {!showComparison && (
+                                        <div className="space-y-3">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Add Specific Examples (Optional - Makes it more authentic)
+                                                </label>
+                                                <div className="space-y-2">
+                                                    <input
+                                                        type="text"
+                                                        value={userExamples[0]}
+                                                        onChange={(e) => setUserExamples([e.target.value, userExamples[1]])}
+                                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                                                        placeholder="e.g., 'Cambridge Study 2023 showed 78% improvement...'"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={userExamples[1]}
+                                                        onChange={(e) => setUserExamples([userExamples[0], e.target.value])}
+                                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                                                        placeholder="e.g., 'Maria from Brazil improved from 6.0 to 7.5...'"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={handleHumanizeContent}
+                                                disabled={isHumanizing}
+                                                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                                            >
+                                                {isHumanizing ? (
+                                                    <>
+                                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                                        Humanizing Content (60-90 seconds)...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Sparkles className="w-5 h-5" />
+                                                        Humanize Content (3-Pass AI Transformation)
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* Comparison View */}
+                                    {showComparison && humanizedContent && (
+                                        <div className="space-y-4">
+                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                                <p className="text-sm text-blue-800 font-medium mb-1">✓ Content Humanized Successfully!</p>
+                                                <p className="text-xs text-blue-700">Review the changes below. The humanized version has been re-analyzed for AI detection.</p>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Original Content</h4>
+                                                    <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto text-xs font-mono">
+                                                        {content.slice(0, 500)}...
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Humanized Content</h4>
+                                                    <div className="bg-green-50 p-4 rounded-lg max-h-64 overflow-y-auto text-xs font-mono">
+                                                        {humanizedContent.slice(0, 500)}...
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={handleAcceptHumanized}
+                                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2"
+                                                >
+                                                    <Check className="w-4 h-4" />
+                                                    Accept Humanized Version
+                                                </button>
+                                                <button
+                                                    onClick={handleRejectHumanized}
+                                                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg"
+                                                >
+                                                    Keep Original
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Post Details Summary */}

@@ -1,12 +1,10 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 
 export const authOptions: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma) as any,
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -68,11 +66,84 @@ export const authOptions: NextAuthOptions = {
             }
             return session;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, account, profile }) {
+            // On initial sign in (when user object exists)
             if (user) {
                 token.id = user.id;
                 token.role = (user as any).role;
             }
+
+            // For OAuth providers, ensure user exists in database
+            if (account?.provider === 'google' && profile?.email) {
+                const existingUser = await prisma.user.findUnique({
+                    where: { email: profile.email }
+                });
+
+                if (existingUser) {
+                    // User exists, use their data
+                    token.id = existingUser.id;
+                    token.role = existingUser.role;
+
+                    // Check if account link exists
+                    const accountLink = await prisma.account.findFirst({
+                        where: {
+                            userId: existingUser.id,
+                            provider: 'google'
+                        }
+                    });
+
+                    // Create account link if it doesn't exist
+                    if (!accountLink && account.providerAccountId) {
+                        await prisma.account.create({
+                            data: {
+                                userId: existingUser.id,
+                                type: account.type,
+                                provider: account.provider,
+                                providerAccountId: account.providerAccountId,
+                                refresh_token: account.refresh_token,
+                                access_token: account.access_token,
+                                expires_at: account.expires_at,
+                                token_type: account.token_type,
+                                scope: account.scope,
+                                id_token: account.id_token,
+                            }
+                        });
+                    }
+                } else {
+                    // Create new user with Google
+                    const newUser = await prisma.user.create({
+                        data: {
+                            email: profile.email,
+                            name: profile.name || null,
+                            image: (profile as any).picture || null,
+                            emailVerified: new Date(),
+                            role: 'USER',
+                        }
+                    });
+
+                    // Create account link
+                    if (account.providerAccountId) {
+                        await prisma.account.create({
+                            data: {
+                                userId: newUser.id,
+                                type: account.type,
+                                provider: account.provider,
+                                providerAccountId: account.providerAccountId,
+                                refresh_token: account.refresh_token,
+                                access_token: account.access_token,
+                                expires_at: account.expires_at,
+                                token_type: account.token_type,
+                                scope: account.scope,
+                                id_token: account.id_token,
+                            }
+                        });
+                    }
+
+                    token.id = newUser.id;
+                    token.role = newUser.role;
+                }
+            }
+
             return token;
         },
         async signIn({ user, account, profile }) {

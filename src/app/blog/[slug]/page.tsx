@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Calendar, User, ArrowLeft } from "lucide-react";
+import { Calendar, User, ArrowLeft, Home } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -44,10 +44,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {/* Header */}
             <div className="bg-gradient-to-r from-[#52B0C9] to-emerald-600 text-white py-12">
                 <div className="max-w-4xl mx-auto px-4">
-                    <Link href="/blog" className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-4">
-                        <ArrowLeft className="w-4 h-4" />
-                        Back to Blog
-                    </Link>
+                    <div className="flex items-center gap-4 mb-4">
+                        <Link href="/" className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors">
+                            <Home className="w-4 h-4" />
+                            Home
+                        </Link>
+                        <span className="text-white/50">|</span>
+                        <Link href="/blog" className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors">
+                            <ArrowLeft className="w-4 h-4" />
+                            Blog
+                        </Link>
+                    </div>
                     <h1 className="text-4xl md:text-5xl font-bold mb-3">{post.title}</h1>
                     <div className="flex flex-wrap items-center gap-4 text-white/90">
                         <div className="flex items-center gap-2">

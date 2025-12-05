@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Calendar, User, Tag, ArrowRight } from "lucide-react";
+import { Calendar, User, Tag, ArrowRight, Home } from "lucide-react";
 
 export
 
@@ -40,6 +40,10 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
             {/* Header */}
             <div className="bg-gradient-to-r from-[#52B0C9] to-emerald-600 text-white py-16">
                 <div className="max-w-6xl mx-auto px-4">
+                    <Link href="/" className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors">
+                        <Home className="w-4 h-4" />
+                        Return to Home
+                    </Link>
                     <h1 className="text-5xl font-bold mb-3">Beyond the Band Blog</h1>
                     <p className="text-xl text-white/90">Learn the Language. Live the Life.</p>
                 </div>

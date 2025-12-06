@@ -248,7 +248,7 @@ export default function Home() {
               <div className="aspect-[4/3] relative">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20 z-10"></div>
                 <img
-                  src="/university.png"
+                  src="https://images.unsplash.com/photo-1627556704353-016baeb12c79?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0"
                   alt="University"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />

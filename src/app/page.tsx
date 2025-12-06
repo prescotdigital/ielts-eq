@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Mic, Brain, BookOpen, Headphones, BookMarked, CheckCircle2, Star, TrendingUp, Sparkles, PlayCircle } from "lucide-react";
+import { ArrowRight, Mic, Brain, BookOpen, Headphones, BookMarked, CheckCircle2, Star, TrendingUp, Sparkles, PlayCircle, Globe, GraduationCap, Briefcase } from "lucide-react";
 
 export default function Home() {
   return (
@@ -90,11 +90,11 @@ export default function Home() {
 
           {/* Headline */}
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-center mb-6 leading-tight">
-            <span className="inline-block">Train Smarter.</span>
+            <span className="inline-block hover:scale-105 transition-transform cursor-default">Train Smarter.</span>
             <br />
-            <span className="inline-block">Speak Better.</span>
+            <span className="inline-block hover:scale-105 transition-transform cursor-default">Speak Better.</span>
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-600 inline-block">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-600 inline-block hover:scale-105 transition-transform cursor-default">
               Master IELTS.
             </span>
           </h1>
@@ -177,7 +177,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Vocabulary Builder</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Master 1,000+ academic words through interactive games. Make learning vocabulary actually enjoyable.
+                  Master academic words through interactive games. Make learning vocabulary actually enjoyable.
                 </p>
               </div>
             </div>
@@ -212,38 +212,113 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Social Proof Stats */}
-        <section className="py-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-3xl shadow-2xl mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              Students Using IELTS EQ Achieve Results
+        {/* Use Cases Section */}
+        <section className="py-20 bg-white">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Who IELTS EQ Is For
             </h2>
-            <p className="text-emerald-100 text-lg">Join thousands of successful test-takers</p>
+            <p className="text-xl text-gray-600">Your goals, our platform</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
-            {/* Stat 1 */}
-            <div className="text-center">
-              <div className="text-5xl font-extrabold text-white mb-2">20,000+</div>
-              <div className="text-emerald-100 text-lg font-medium">Hours Taught</div>
-            </div>
-
-            {/* Stat 2 */}
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 mb-2">
-                <span className="text-5xl font-extrabold text-white">4.8</span>
-                <Star className="w-8 h-8 text-yellow-300 fill-yellow-300" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Immigration */}
+            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div className="aspect-[4/3] relative">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20 z-10"></div>
+                <img
+                  src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&h=600&fit=crop"
+                  alt="Immigration"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Globe className="w-5 h-5 text-emerald-400" />
+                    <h3 className="text-2xl font-bold text-white">Immigration</h3>
+                  </div>
+                  <p className="text-gray-200 text-sm">
+                    Meet visa requirements with confidence. Achieve the speaking score you need for permanent residency.
+                  </p>
+                </div>
               </div>
-              <div className="text-emerald-100 text-lg font-medium">Average Rating</div>
             </div>
 
-            {/* Stat 3 */}
-            <div className="text-center">
-              <div className="text-5xl font-extrabold text-white mb-2">Band 7+</div>
-              <div className="text-emerald-100 text-lg font-medium">Is Closer Than You Think</div>
+            {/* University */}
+            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div className="aspect-[4/3] relative">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20 z-10"></div>
+                <img
+                  src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
+                  alt="University"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <GraduationCap className="w-5 h-5 text-emerald-400" />
+                    <h3 className="text-2xl font-bold text-white">University</h3>
+                  </div>
+                  <p className="text-gray-200 text-sm">
+                    Get accepted to your dream university. Score the Band 7+ required for top institutions worldwide.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Career Development */}
+            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
+              <div className="aspect-[4/3] relative">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20 z-10"></div>
+                <img
+                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop"
+                  alt="Career"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Briefcase className="w-5 h-5 text-emerald-400" />
+                    <h3 className="text-2xl font-bold text-white">Career Development</h3>
+                  </div>
+                  <p className="text-gray-200 text-sm">
+                    Advance your professional career. Demonstrate English proficiency to unlock global opportunities.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
+
+        {/* Social Proof Stats */
+          <section className="py-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-3xl shadow-2xl mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                Students Using IELTS EQ Achieve Results
+              </h2>
+              <p className="text-emerald-100 text-lg">Join thousands of successful test-takers</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
+              {/* Stat 1 */}
+              <div className="text-center">
+                <div className="text-5xl font-extrabold text-white mb-2">20,000+</div>
+                <div className="text-emerald-100 text-lg font-medium">Hours Taught</div>
+              </div>
+
+              {/* Stat 2 */}
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-1 mb-2">
+                  <span className="text-5xl font-extrabold text-white">4.8</span>
+                  <Star className="w-8 h-8 text-yellow-300 fill-yellow-300" />
+                </div>
+                <div className="text-emerald-100 text-lg font-medium">Average Rating</div>
+              </div>
+
+              {/* Stat 3 */}
+              <div className="text-center">
+                <div className="text-5xl font-extrabold text-white mb-2">Band 7+</div>
+                <div className="text-emerald-100 text-lg font-medium">Is Closer Than You Think</div>
+              </div>
+            </div>
+          </section>
 
         {/* How It Works */}
         <section id="how-it-works" className="py-20">

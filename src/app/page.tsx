@@ -12,6 +12,16 @@ export default function Home() {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-8px); }
         }
+        @keyframes fadeIn {
+          from { 
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
         .wave-letter {
           display: inline-block;
           transition: transform 0.2s ease;
@@ -80,10 +90,12 @@ export default function Home() {
 
           {/* Headline */}
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-center mb-6 leading-tight">
-            Your AI IELTS Speaking Coach
+            <span className="inline-block">Train Smarter.</span>
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-600">
-              Get Band 7+ with Personalized Feedback
+            <span className="inline-block">Speak Better.</span>
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-600 inline-block">
+              Master IELTS.
             </span>
           </h1>
 
@@ -112,13 +124,13 @@ export default function Home() {
 
           {/* Social Proof */}
           <p className="text-center text-gray-500 text-sm">
-            Trusted by <span className="font-semibold text-emerald-600">10,000+</span> test-takers worldwide 🌍
+            Join <span className="font-semibold text-emerald-600">thousands</span> of test-takers worldwide 🌍
           </p>
         </div>
 
         {/* 5-Feature Card Grid */}
         <section className="py-20">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Everything You Need to Master IELTS Speaking
             </h2>
@@ -127,9 +139,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Feature 1: AI Speaking Simulations */}
-            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.1s_forwards]">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
                 <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
@@ -143,7 +155,7 @@ export default function Home() {
             </div>
 
             {/* Feature 2: Smart Feedback */}
-            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.2s_forwards]">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
                 <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
@@ -157,7 +169,7 @@ export default function Home() {
             </div>
 
             {/* Feature 3: Vocabulary Builder */}
-            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.3s_forwards]">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
                 <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
@@ -171,7 +183,7 @@ export default function Home() {
             </div>
 
             {/* Feature 4: Pronunciation Lab */}
-            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
                 <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
@@ -185,7 +197,7 @@ export default function Home() {
             </div>
 
             {/* Feature 5: Free Learning Blog */}
-            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2 md:col-span-2 lg:col-span-1">
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2 md:col-span-2 opacity-0 animate-[fadeIn_0.6s_ease-out_0.5s_forwards]">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
                 <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
@@ -212,8 +224,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
             {/* Stat 1 */}
             <div className="text-center">
-              <div className="text-5xl font-extrabold text-white mb-2">10,000+</div>
-              <div className="text-emerald-100 text-lg font-medium">Students Worldwide</div>
+              <div className="text-5xl font-extrabold text-white mb-2">20,000+</div>
+              <div className="text-emerald-100 text-lg font-medium">Hours Taught</div>
             </div>
 
             {/* Stat 2 */}
@@ -228,7 +240,7 @@ export default function Home() {
             {/* Stat 3 */}
             <div className="text-center">
               <div className="text-5xl font-extrabold text-white mb-2">Band 7+</div>
-              <div className="text-emerald-100 text-lg font-medium">Success Rate</div>
+              <div className="text-emerald-100 text-lg font-medium">Is Closer Than You Think</div>
             </div>
           </div>
         </section>
@@ -285,7 +297,7 @@ export default function Home() {
               Ready to Ace Your IELTS Speaking?
             </h2>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join 10,000+ students improving their scores with AI-powered feedback
+              Join thousands of students improving their scores with AI-powered feedback
             </p>
             <Link
               href="/api/auth/signin?callbackUrl=/dashboard"

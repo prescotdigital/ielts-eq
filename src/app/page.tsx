@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Mic, CheckCircle2, BarChart3, PlayCircle, GraduationCap, Globe, Briefcase } from "lucide-react";
-import Image from "next/image";
+import { ArrowRight, Mic, Brain, BookOpen, Headphones, BookMarked, CheckCircle2, Star, TrendingUp, Sparkles, PlayCircle } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-white to-emerald-50/30">
       {/* Wave Animation CSS */}
       <style jsx>{`
         @keyframes wave {
@@ -20,19 +19,21 @@ export default function Home() {
         .blog-wave-button:hover .wave-letter {
           animation: wave 0.6s ease-in-out;
         }
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+        }
       `}</style>
-      {/* Animated Background Orbs */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl animate-float-delayed"></div>
-        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-blue-200/20 rounded-full blur-3xl animate-float-slow"></div>
-      </div>
 
       {/* Navbar */}
-      <nav className="border-b border-gray-200/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+      <nav className="border-b border-gray-200/50 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-emerald-200 group-hover:shadow-emerald-300 transition-all group-hover:scale-110">
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-emerald-200 group-hover:shadow-emerald-300 transition-all group-hover:scale-110">
               EQ
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">IELTS EQ</span>
@@ -66,250 +67,241 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <main className="container mx-auto px-6 pt-20 pb-24">
-        <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200/50 text-purple-700 text-sm font-medium mb-8 shadow-sm hover:shadow-md transition-all group">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-            </span>
-            <span className="group-hover:text-purple-800 transition-colors">New: AI-Powered Pronunciation Coach</span>
+      {/* Hero Section - Redesigned */}
+      <main className="container mx-auto px-6">
+        <div className="max-w-6xl mx-auto pt-16 pb-12">
+          {/* AI Badge */}
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 text-emerald-700 text-sm font-semibold shadow-sm">
+              <Sparkles className="w-4 h-4" />
+              Powered by Advanced AI Architecture
+            </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-tight">
-            <span className="inline-block hover:scale-105 transition-transform">Train Smarter.</span><br />
-            <span className="inline-block hover:scale-105 transition-transform">Speak Better.</span><br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-emerald-400 animate-gradient-x inline-block hover:scale-105 transition-transform">
-              Master IELTS.
+          {/* Headline */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-center mb-6 leading-tight">
+            Your AI IELTS Speaking Coach
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-600">
+              Get Band 7+ with Personalized Feedback
             </span>
           </h1>
 
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Get instant, <span className="text-primary font-semibold">AI-driven feedback</span> on your speaking performance.
-            Improve your grammar, fluency, and vocabulary with real-time analysis.
+          {/* Subheadline */}
+          <p className="text-xl md:text-2xl text-center text-gray-600 max-w-3xl mx-auto mb-8">
+            Real exam simulations • Instant AI feedback • Pronunciation training
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          {/* Dual CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Link
               href="/api/auth/signin?callbackUrl=/dashboard"
-              className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-primary to-emerald-600 hover:from-emerald-600 hover:to-primary text-white rounded-full font-semibold text-lg transition-all shadow-lg shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300 flex items-center justify-center gap-2 hover:scale-105"
+              className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full font-semibold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hover:scale-105"
             >
               Start Free Practice
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="#features"
-              className="w-full sm:w-auto px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 text-gray-700 hover:border-primary/50 hover:bg-gray-50 rounded-full font-semibold text-lg transition-all flex items-center justify-center gap-2 hover:scale-105 shadow-sm"
+              href="#how-it-works"
+              className="group w-full sm:w-auto px-8 py-4 bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 rounded-full font-semibold text-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
             >
-              <PlayCircle className="w-5 h-5" /> Watch Demo
+              <PlayCircle className="w-5 h-5" />
+              See How It Works
             </Link>
           </div>
+
+          {/* Social Proof */}
+          <p className="text-center text-gray-500 text-sm">
+            Trusted by <span className="font-semibold text-emerald-600">10,000+</span> test-takers worldwide 🌍
+          </p>
         </div>
 
-        {/* Who's This For Section */}
-        <div className="mt-32 mb-24 max-w-5xl mx-auto animate-fade-in-up-delayed">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4">
-              Who's This For?
+        {/* 5-Feature Card Grid */}
+        <section className="py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Everything You Need to Master IELTS Speaking
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Whether you're pursuing immigration, university admission, or career advancement,
-              IELTS EQ helps you achieve the speaking score you need.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Five integrated tools designed to elevate your speaking skills to Band 7 and beyond
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Immigration */}
-            <div className="group bg-gradient-to-br from-blue-50 via-white to-blue-50/30 p-8 rounded-3xl border border-blue-100 hover:border-blue-300 transition-all hover:shadow-2xl hover:shadow-blue-200/50 hover:-translate-y-2 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Feature 1: AI Speaking Simulations */}
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200 group-hover:shadow-blue-300 group-hover:scale-110 transition-all">
-                  <Globe className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <Mic className="w-7 h-7 text-white" />
                 </div>
-                <div className="mb-4 rounded-2xl overflow-hidden border border-blue-100">
-                  <Image
-                    src="/immigration-ai.png"
-                    alt="AI-powered IELTS testing for immigration"
-                    width={400}
-                    height={250}
-                    className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Immigration Applicants</h3>
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  Secure your visa with confidence. Practice authentic IELTS speaking scenarios
-                  and get the band score required for permanent residency in Canada, Australia, UK, or New Zealand.
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">AI Speaking Simulations</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Practice with authentic IELTS Part 1, 2, and 3 questions. Real exam format, real timing, real results.
                 </p>
-                <div className="text-sm text-blue-600 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Achieve Band 7+ for most immigration programs
-                </div>
               </div>
             </div>
 
-            {/* University Students */}
-            <div className="group bg-gradient-to-br from-purple-50 via-white to-purple-50/30 p-8 rounded-3xl border border-purple-100 hover:border-purple-300 transition-all hover:shadow-2xl hover:shadow-purple-200/50 hover:-translate-y-2 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            {/* Feature 2: Smart Feedback */}
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
-                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-purple-200 group-hover:shadow-purple-300 group-hover:scale-110 transition-all">
-                  <GraduationCap className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <Brain className="w-7 h-7 text-white" />
                 </div>
-                <div className="mb-4 rounded-2xl overflow-hidden border border-purple-100">
-                  <Image
-                    src="/university-ai.png"
-                    alt="AI-powered IELTS learning for university students"
-                    width={400}
-                    height={250}
-                    className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">University Students</h3>
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  Get accepted to your dream university. Master the speaking test with AI-powered feedback
-                  and meet entry requirements for top universities worldwide.
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Smart Feedback Engine</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Get personalized analysis of YOUR specific responses. Grammar, fluency, vocabulary—all tailored to you.
                 </p>
-                <div className="text-sm text-purple-600 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Meet requirements for Oxford, Harvard, MIT & more
-                </div>
               </div>
             </div>
 
-            {/* Career Professionals */}
-            <div className="group bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30 p-8 rounded-3xl border border-emerald-100 hover:border-emerald-300 transition-all hover:shadow-2xl hover:shadow-emerald-200/50 hover:-translate-y-2 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            {/* Feature 3: Vocabulary Builder */}
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
               <div className="relative">
-                <div className="w-14 h-14 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-200 group-hover:shadow-emerald-300 group-hover:scale-110 transition-all">
-                  <Briefcase className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <BookOpen className="w-7 h-7 text-white" />
                 </div>
-                <div className="mb-4 rounded-2xl overflow-hidden border border-emerald-100">
-                  <Image
-                    src="/career-ai.png"
-                    alt="AI-powered IELTS assessment for career professionals"
-                    width={400}
-                    height={250}
-                    className="w-full h-auto group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">Career Professionals</h3>
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  Validate your English proficiency for global opportunities. Demonstrate your communication
-                  skills and unlock international career advancement.
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Vocabulary Builder</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Master 1,000+ academic words through interactive games. Make learning vocabulary actually enjoyable.
                 </p>
-                <div className="text-sm text-emerald-600 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Prove professional-level English proficiency
+              </div>
+            </div>
+
+            {/* Feature 4: Pronunciation Lab */}
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <Headphones className="w-7 h-7 text-white" />
                 </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Pronunciation Lab</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Drill tricky English sounds and sentences. Perfect your accent with AI-powered pronunciation analysis.
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 5: Free Learning Blog */}
+            <div className="group relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-emerald-200 hover:-translate-y-2 md:col-span-2 lg:col-span-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-white opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity"></div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <BookMarked className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Free Learning Blog</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Expert tips, strategies, and daily English practice. Learn beyond the test for real-world fluency.
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
+        {/* Social Proof Stats */}
+        <section className="py-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-3xl shadow-2xl mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+              Students Using IELTS EQ Achieve Results
+            </h2>
+            <p className="text-emerald-100 text-lg">Join thousands of successful test-takers</p>
+          </div>
 
-        {/* Feature Grid */}
-        <div id="features" className="grid md:grid-cols-3 gap-6 mt-24 max-w-6xl mx-auto">
-          <div className="group bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-emerald-100 hover:border-emerald-200 transition-all hover:-translate-y-1">
-            <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-primary rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-200 group-hover:shadow-emerald-300 group-hover:rotate-6 transition-all">
-              <Mic className="w-7 h-7 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
+            {/* Stat 1 */}
+            <div className="text-center">
+              <div className="text-5xl font-extrabold text-white mb-2">10,000+</div>
+              <div className="text-emerald-100 text-lg font-medium">Students Worldwide</div>
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-primary transition-colors">Real Exam Simulation</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Practice with realistic IELTS questions under exam conditions.
-              Experience the pressure before the real day.
-            </p>
-          </div>
-          <div className="group bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-purple-100 hover:border-purple-200 transition-all hover:-translate-y-1">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-purple-200 group-hover:shadow-purple-300 group-hover:rotate-6 transition-all">
-              <CheckCircle2 className="w-7 h-7 text-white" />
+
+            {/* Stat 2 */}
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                <span className="text-5xl font-extrabold text-white">4.8</span>
+                <Star className="w-8 h-8 text-yellow-300 fill-yellow-300" />
+              </div>
+              <div className="text-emerald-100 text-lg font-medium">Average Rating</div>
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-purple-600 transition-colors">Instant Feedback</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Our AI analyzes your speech instantly, highlighting grammar errors
-              and suggesting better vocabulary.
-            </p>
-          </div>
-          <div className="group bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-blue-100 hover:border-blue-200 transition-all hover:-translate-y-1">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200 group-hover:shadow-blue-300 group-hover:rotate-6 transition-all">
-              <BarChart3 className="w-7 h-7 text-white" />
+
+            {/* Stat 3 */}
+            <div className="text-center">
+              <div className="text-5xl font-extrabold text-white mb-2">Band 7+</div>
+              <div className="text-emerald-100 text-lg font-medium">Success Rate</div>
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-blue-600 transition-colors">Track Progress</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Visualize your improvement over time with detailed analytics
-              on fluency, coherence, and lexical resource.
-            </p>
           </div>
-        </div>
+        </section>
+
+        {/* How It Works */}
+        <section id="how-it-works" className="py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Your Path to IELTS Success
+            </h2>
+            <p className="text-xl text-gray-600">Simple, effective, proven</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            {/* Step 1 */}
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 shadow-lg">
+                1
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Practice</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Answer real IELTS questions in our simulated test environment
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 shadow-lg">
+                2
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Get Feedback</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Receive instant, personalized AI analysis of your performance
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 shadow-lg">
+                3
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Improve</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Watch your scores climb to Band 7+ with targeted practice
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-20 mb-12">
+          <div className="max-w-4xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl p-12 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Ready to Ace Your IELTS Speaking?
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Join 10,000+ students improving their scores with AI-powered feedback
+            </p>
+            <Link
+              href="/api/auth/signin?callbackUrl=/dashboard"
+              className="inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full font-bold text-xl transition-all shadow-lg hover:shadow-xl hover:scale-105"
+            >
+              Start Practicing Free
+              <ArrowRight className="w-6 h-6" />
+            </Link>
+            <p className="text-gray-400 text-sm mt-4">No credit card required</p>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 py-12 bg-gradient-to-b from-gray-50 to-white mt-24">
-        <div className="container mx-auto px-6 text-center text-gray-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} IELTS EQ. All rights reserved.</p>
-        </div>
-      </footer>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          50% { transform: translateY(-20px) translateX(10px); }
-        }
-        @keyframes float-delayed {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          50% { transform: translateY(20px) translateX(-10px); }
-        }
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          50% { transform: translateY(-15px) translateX(15px); }
-        }
-        @keyframes gradient-x {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes fade-in-up-delayed {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-float {
-          animation: float 8s ease-in-out infinite;
-        }
-        .animate-float-delayed {
-          animation: float-delayed 10s ease-in-out infinite;
-        }
-        .animate-float-slow {
-          animation: float-slow 12s ease-in-out infinite;
-        }
-        .animate-gradient-x {
-          background-size: 200% 200%;
-          animation: gradient-x 3s ease infinite;
-        }
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out;
-        }
-        .animate-fade-in-up-delayed {
-          animation: fade-in-up-delayed 1s ease-out 0.3s both;
-        }
-      `}</style>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200/50 bg-white/80 backdrop-blur-xl mt-20">
-        <div className="container mx-auto px-6 py-8">
+      <footer className="bg-gray-50 border-t border-gray-200 py-12">
+        <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">
@@ -337,4 +329,3 @@ export default function Home() {
     </div>
   );
 }
-

@@ -7,6 +7,20 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
+      {/* Wave Animation CSS */}
+      <style jsx>{`
+        @keyframes wave {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+        .wave-letter {
+          display: inline-block;
+          transition: transform 0.2s ease;
+        }
+        .blog-wave-button:hover .wave-letter {
+          animation: wave 0.6s ease-in-out;
+        }
+      `}</style>
       {/* Animated Background Orbs */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl animate-float"></div>
@@ -24,6 +38,18 @@ export default function Home() {
             <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">IELTS EQ</span>
           </div>
           <div className="flex items-center gap-3">
+            {/* Animated Blog Button */}
+            <Link
+              href="/blog"
+              className="blog-wave-button relative px-5 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg"
+            >
+              <span className="relative inline-flex">
+                <span className="wave-letter" style={{ animationDelay: '0ms' }}>B</span>
+                <span className="wave-letter" style={{ animationDelay: '100ms' }}>l</span>
+                <span className="wave-letter" style={{ animationDelay: '200ms' }}>o</span>
+                <span className="wave-letter" style={{ animationDelay: '300ms' }}>g</span>
+              </span>
+            </Link>
             <Link
               href="/api/auth/signin?callbackUrl=/dashboard"
               className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-4 py-2"

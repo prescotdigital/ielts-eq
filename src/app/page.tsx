@@ -287,38 +287,38 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Social Proof Stats */
-          <section className="py-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-3xl shadow-2xl mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                Students Using IELTS EQ Achieve Results
-              </h2>
-              <p className="text-emerald-100 text-lg">Join thousands of successful test-takers</p>
+        {/* Social Proof Stats */}
+        <section className="py-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-3xl shadow-2xl mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+              Students Using IELTS EQ Achieve Results
+            </h2>
+            <p className="text-emerald-100 text-lg">Join thousands of successful test-takers</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
+            {/* Stat 1 */}
+            <div className="text-center">
+              <div className="text-5xl font-extrabold text-white mb-2">20,000+</div>
+              <div className="text-emerald-100 text-lg font-medium">Hours Taught</div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto px-6">
-              {/* Stat 1 */}
-              <div className="text-center">
-                <div className="text-5xl font-extrabold text-white mb-2">20,000+</div>
-                <div className="text-emerald-100 text-lg font-medium">Hours Taught</div>
+            {/* Stat 2 */}
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                <span className="text-5xl font-extrabold text-white">4.8</span>
+                <Star className="w-8 h-8 text-yellow-300 fill-yellow-300" />
               </div>
-
-              {/* Stat 2 */}
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1 mb-2">
-                  <span className="text-5xl font-extrabold text-white">4.8</span>
-                  <Star className="w-8 h-8 text-yellow-300 fill-yellow-300" />
-                </div>
-                <div className="text-emerald-100 text-lg font-medium">Average Rating</div>
-              </div>
-
-              {/* Stat 3 */}
-              <div className="text-center">
-                <div className="text-5xl font-extrabold text-white mb-2">Band 7+</div>
-                <div className="text-emerald-100 text-lg font-medium">Is Closer Than You Think</div>
-              </div>
+              <div className="text-emerald-100 text-lg font-medium">Average Rating</div>
             </div>
-          </section>
+
+            {/* Stat 3 */}
+            <div className="text-center">
+              <div className="text-5xl font-extrabold text-white mb-2">Band 7+</div>
+              <div className="text-emerald-100 text-lg font-medium">Is Closer Than You Think</div>
+            </div>
+          </div>
+        </section>
 
         {/* How It Works */}
         <section id="how-it-works" className="py-20">
